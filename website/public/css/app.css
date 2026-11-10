@@ -667,7 +667,21 @@ body.player-in-fullscreen .art-video-player {
   box-shadow: none !important;
   z-index: 2147483647 !important;
   background: #000000 !important;
-  transform: none !important;
+}
+
+/* Mobile Portrait Fullscreen Auto-Rotation: Expands and rotates video to fill screen in landscape */
+.art-video-player.player-rotated-landscape,
+body.player-in-fullscreen .art-video-player.player-rotated-landscape {
+  width: 100dvh !important;
+  height: 100dvw !important;
+  transform-origin: 0 0 !important;
+  transform: rotate(90deg) translate(0, -100dvw) !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 2147483647 !important;
 }
 
 /* Video inside fullscreen container */

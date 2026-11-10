@@ -612,6 +612,17 @@ class AnimePlayer {
         }
       });
 
+      // Mobile Landscape Auto-Rotation Listener
+      const onMobileRotateCheck = () => {
+        self.checkMobileLandscapeRotation();
+      };
+      window.addEventListener('resize', onMobileRotateCheck);
+      window.addEventListener('orientationchange', onMobileRotateCheck);
+      if (window.screen?.orientation?.addEventListener) {
+        window.screen.orientation.addEventListener('change', onMobileRotateCheck);
+      }
+      this._mobileRotateListener = onMobileRotateCheck;
+
       // Clean raw or escaped HTML tags in subtitles so <i> or <b> never display as literal text
       const cleanSubLine = (el) => {
         if (!el) return;
@@ -1213,8 +1224,39 @@ class AnimePlayer {
     }
 
     this.updateFullscreenIcons(isActuallyFull);
+    this.checkMobileLandscapeRotation();
     if (typeof this.onFullscreenChange === 'function') {
       this.onFullscreenChange(isActuallyFull);
+    }
+  }
+
+  /**
+   * Phone Auto-Rotation: If device is in portrait while in fullscreen, rotate into landscape
+   */
+  checkMobileLandscapeRotation() {
+    if (!this.art) return;
+    const playerEl = this.art.template?.$player || document.querySelector('.art-video-player');
+    if (!playerEl) return;
+
+    const isFull = !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      (this.art && (this.art.fullscreen || this.art.fullscreenWeb)) ||
+      document.body.classList.contains('player-in-fullscreen')
+    );
+
+    const isMobile = window.matchMedia('(pointer: coarse)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isFull && isMobile) {
+      // If phone is held in portrait (height > width), rotate 90deg into landscape to fill the screen
+      const isPortrait = window.innerHeight > window.innerWidth;
+      if (isPortrait) {
+        playerEl.classList.add('player-rotated-landscape');
+      } else {
+        playerEl.classList.remove('player-rotated-landscape');
+      }
+    } else {
+      playerEl.classList.remove('player-rotated-landscape');
     }
   }
 
@@ -1250,6 +1292,17 @@ class AnimePlayer {
   stop() {
     document.body.classList.remove('player-in-fullscreen');
     document.body.classList.remove('player-forced-landscape');
+    const playerEl = this.art?.template?.$player || document.querySelector('.art-video-player');
+    if (playerEl) playerEl.classList.remove('player-rotated-landscape');
+
+    if (this._mobileRotateListener) {
+      window.removeEventListener('resize', this._mobileRotateListener);
+      window.removeEventListener('orientationchange', this._mobileRotateListener);
+      if (window.screen?.orientation?.removeEventListener) {
+        window.screen.orientation.removeEventListener('change', this._mobileRotateListener);
+      }
+      this._mobileRotateListener = null;
+    }
 
     if (this._nativeFsListener) {
       document.removeEventListener('fullscreenchange', this._nativeFsListener);

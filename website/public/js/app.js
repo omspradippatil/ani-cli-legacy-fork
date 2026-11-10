@@ -1027,6 +1027,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.screen.orientation.addEventListener('change', handleOrientation);
     }
     window.addEventListener('orientationchange', handleOrientation);
+    window.addEventListener('resize', handleOrientation);
   }
   setupAutoOrientationFullscreen();
 
