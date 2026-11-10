@@ -48,16 +48,24 @@ async function runTests() {
     const hasPlayPause = await page.$eval('#btn-play-pause-down', el => !!el).catch(() => false);
     record('1.1 Toolbar Play/Pause button (#btn-play-pause-down) exists', hasPlayPause);
 
+    const hasSkipBack10 = await page.$eval('#btn-skip-backward-10', el => !!el).catch(() => false);
+    record('1.2 Toolbar Skip -10s button (#btn-skip-backward-10) exists', hasSkipBack10);
+
     const hasSkipBack5 = await page.$eval('#btn-skip-backward-5', el => !!el).catch(() => false);
-    record('1.2 Toolbar Skip -5s button (#btn-skip-backward-5) exists', hasSkipBack5);
+    record('1.2b Toolbar Skip -5s button (#btn-skip-backward-5) exists', hasSkipBack5);
 
     const hasSkipFwd5 = await page.$eval('#btn-skip-forward-5', el => !!el).catch(() => false);
     record('1.3 Toolbar Skip +5s button (#btn-skip-forward-5) exists', hasSkipFwd5);
+
+    const hasSkipFwd10 = await page.$eval('#btn-skip-forward-10', el => !!el).catch(() => false);
+    record('1.3b Toolbar Skip +10s button (#btn-skip-forward-10) exists', hasSkipFwd10);
 
     // 1.4 Click Toolbar Skip +5s advances currentTime
     await page.evaluate(() => {
       if (window.artplayerInstance) {
         window.artplayerInstance._virtualTime = 100;
+        window.artplayerInstance._seekTargetTime = 100;
+        window.artplayerInstance._seekTimestamp = Date.now();
       }
     });
 
@@ -106,20 +114,36 @@ async function runTests() {
     const spaceResult = await page.evaluate(() => window.artplayerInstance?.art?.playing);
     record('1.9 Pressing Space toggles Play / Pause', typeof spaceResult === 'boolean');
 
-    // 1.10 Keyboard Shortcut: ArrowLeft or 'j' rewinds 5s
+    // 1.10 Keyboard Shortcut: ArrowLeft rewinds 5s
     await page.evaluate(() => {
-      if (window.artplayerInstance) window.artplayerInstance._virtualTime = 50;
+      if (window.artplayerInstance) {
+        window.artplayerInstance._virtualTime = 50;
+        window.artplayerInstance._seekTargetTime = 50;
+        window.artplayerInstance._seekTimestamp = Date.now();
+      }
     });
     await page.keyboard.press('ArrowLeft');
     await page.waitForTimeout(100);
     const timeAfterLeft = await page.evaluate(() => window.artplayerInstance?._virtualTime || window.artplayerInstance?.art?.currentTime || 0);
     record('1.10 Pressing ArrowLeft rewinds 5s', timeAfterLeft <= 46, `Current: ${timeAfterLeft}`);
 
-    // 1.11 Keyboard Shortcut: ArrowRight or 'l' forwards 5s
+    // 1.11 Keyboard Shortcut: ArrowRight forwards 5s
     await page.keyboard.press('ArrowRight');
     await page.waitForTimeout(100);
     const timeAfterRight = await page.evaluate(() => window.artplayerInstance?._virtualTime || window.artplayerInstance?.art?.currentTime || 0);
     record('1.11 Pressing ArrowRight forwards 5s', timeAfterRight >= 49, `Current: ${timeAfterRight}`);
+
+    // 1.11b Keyboard Shortcut: J rewinds 10s
+    await page.keyboard.press('KeyJ');
+    await page.waitForTimeout(100);
+    const timeAfterJ = await page.evaluate(() => window.artplayerInstance?._virtualTime || window.artplayerInstance?.art?.currentTime || 0);
+    record('1.11b Pressing "J" rewinds 10s', timeAfterJ <= 41, `Current: ${timeAfterJ}`);
+
+    // 1.11c Keyboard Shortcut: L forwards 10s
+    await page.keyboard.press('KeyL');
+    await page.waitForTimeout(100);
+    const timeAfterL = await page.evaluate(() => window.artplayerInstance?._virtualTime || window.artplayerInstance?.art?.currentTime || 0);
+    record('1.11c Pressing "L" forwards 10s', timeAfterL >= 48, `Current: ${timeAfterL}`);
 
     // 1.12 Keyboard Shortcut: ArrowUp / ArrowDown modifies volume
     const initialVol = await page.evaluate(() => {

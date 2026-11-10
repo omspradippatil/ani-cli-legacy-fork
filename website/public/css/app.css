@@ -299,7 +299,8 @@ body {
   transform: scale(1.05) !important;
 }
 
-.art-video-player .art-btn-skip5 {
+.art-video-player .art-btn-skip5,
+.art-video-player .art-btn-skip10 {
   background: transparent !important;
   color: #ffffff !important;
   border-radius: 6px !important;
@@ -313,13 +314,15 @@ body {
   border: none !important;
 }
 
-.art-video-player .art-btn-skip5:hover {
+.art-video-player .art-btn-skip5:hover,
+.art-video-player .art-btn-skip10:hover {
   background: rgba(255, 255, 255, 0.15) !important;
   color: #ff4f73 !important;
   transform: scale(1.08) !important;
 }
 
-.art-video-player .art-btn-skip5 svg {
+.art-video-player .art-btn-skip5 svg,
+.art-video-player .art-btn-skip10 svg {
   display: block;
 }
 

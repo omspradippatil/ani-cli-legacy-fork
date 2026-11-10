@@ -218,8 +218,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const currentEpTitle = document.getElementById('current-ep-title');
   const currentAnimeTitleSub = document.getElementById('current-anime-title-sub');
   const btnPlayPauseDown = document.getElementById('btn-play-pause-down');
+  const btnSkipBackward10 = document.getElementById('btn-skip-backward-10');
   const btnSkipBackward5 = document.getElementById('btn-skip-backward-5');
   const btnSkipForward5 = document.getElementById('btn-skip-forward-5');
+  const btnSkipForward10 = document.getElementById('btn-skip-forward-10');
   const btnSkipIntro = document.getElementById('btn-skip-intro');
   const btnPrevEp = document.getElementById('btn-prev-ep');
   const btnNextEp = document.getElementById('btn-next-ep');
@@ -2487,6 +2489,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  if (btnSkipBackward10) {
+    btnSkipBackward10.addEventListener('click', () => {
+      if (state.player && typeof state.player.seekRelative === 'function') {
+        state.player.seekRelative(-10);
+        if (state.player.showQuickSeekFeedback) state.player.showQuickSeekFeedback('left', '-10s');
+      } else if (state.player && state.player.art) {
+        state.player.art.currentTime = Math.max(0, state.player.art.currentTime - 10);
+      }
+    });
+  }
+
   if (btnSkipBackward5) {
     btnSkipBackward5.addEventListener('click', () => {
       if (state.player && typeof state.player.seekRelative === 'function') {
@@ -2505,6 +2518,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.player.showQuickSeekFeedback) state.player.showQuickSeekFeedback('right', '+5s');
       } else if (state.player && state.player.art) {
         state.player.art.currentTime = Math.min(state.player.art.duration || Infinity, state.player.art.currentTime + 5);
+      }
+    });
+  }
+
+  if (btnSkipForward10) {
+    btnSkipForward10.addEventListener('click', () => {
+      if (state.player && typeof state.player.seekRelative === 'function') {
+        state.player.seekRelative(10);
+        if (state.player.showQuickSeekFeedback) state.player.showQuickSeekFeedback('right', '+10s');
+      } else if (state.player && state.player.art) {
+        state.player.art.currentTime = Math.min(state.player.art.duration || Infinity, state.player.art.currentTime + 10);
       }
     });
   }

@@ -355,14 +355,26 @@ class AnimePlayer {
           onVttLoad: sanitizeVtt,
         },
         controls: [
+          // Rewind 10s button (Left controls)
+          {
+            name: 'skip-back-10s-btn',
+            position: 'left',
+            index: 10,
+            html: '<button class="art-icon-btn art-btn-skip10" title="Rewind 10s (J)"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.8 11h-.9v-3.26l-1.07.31v-.74l1.83-.6h.14V16zm3.3 0c-.8 0-1.4-.46-1.4-1.81 0-1.34.6-1.81 1.4-1.81s1.4.47 1.4 1.81c0 1.35-.6 1.81-1.4 1.81zm0-.6c.35 0 .5-.32.5-1.21 0-.9-.15-1.21-.5-1.21s-.5.31-.5 1.21c0 .89.15 1.21.5 1.21z"/></svg></button>',
+            click: function () {
+              self.seekRelative(-10);
+              self.showQuickSeekFeedback('left', '-10s');
+            },
+          },
           // Rewind 5s button (Left controls)
           {
             name: 'skip-back-5s-btn',
             position: 'left',
             index: 11,
-            html: '<button class="art-icon-btn art-btn-skip5" title="Rewind 5s (← / J)"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.67l1.73-.57h.13V16zm2.97-.04c-.3.04-.6.04-.88 0-.44-.06-.77-.24-1-.53-.22-.29-.33-.67-.33-1.14 0-.48.11-.86.34-1.15.23-.29.57-.46 1.01-.52.29-.04.59-.04.88 0 .44.06.77.23 1 .52.22.29.34.67.34 1.15 0 .47-.11.85-.33 1.14-.23.29-.57.47-1.03.53zm-.44-2.81c-.24 0-.42.09-.54.27-.12.18-.18.44-.18.78 0 .34.06.6.18.78.12.18.3.27.54.27.24 0 .42-.09.54-.27.12-.18.18-.44.18-.78 0-.34-.06-.6-.18-.78-.12-.18-.3-.27-.54-.27z"/></svg></button>',
+            html: '<button class="art-icon-btn art-btn-skip5" title="Rewind 5s (←)"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.67l1.73-.57h.13V16zm2.97-.04c-.3.04-.6.04-.88 0-.44-.06-.77-.24-1-.53-.22-.29-.33-.67-.33-1.14 0-.48.11-.86.34-1.15.23-.29.57-.46 1.01-.52.29-.04.59-.04.88 0 .44.06.77.23 1 .52.22.29.34.67.34 1.15 0 .47-.11.85-.33 1.14-.23.29-.57.47-1.03.53zm-.44-2.81c-.24 0-.42.09-.54.27-.12.18-.18.44-.18.78 0 .34.06.6.18.78.12.18.3.27.54.27.24 0 .42-.09.54-.27.12-.18.18-.44.18-.78 0-.34-.06-.6-.18-.78-.12-.18-.3-.27-.54-.27z"/></svg></button>',
             click: function () {
               self.seekRelative(-5);
+              self.showQuickSeekFeedback('left', '-5s');
             },
           },
           // Forward 5s button (Left controls)
@@ -370,16 +382,28 @@ class AnimePlayer {
             name: 'skip-fwd-5s-btn',
             position: 'left',
             index: 12,
-            html: '<button class="art-icon-btn art-btn-skip5" title="Forward 5s (→ / L)"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.67l1.73-.57h.13V16zm2.97-.04c-.3.04-.6.04-.88 0-.44-.06-.77-.24-1-.53-.22-.29-.33-.67-.33-1.14 0-.48.11-.86.34-1.15.23-.29.57-.46 1.01-.52.29-.04.59-.04.88 0 .44.06.77.23 1 .52.22.29.34.67.34 1.15 0 .47-.11.85-.33 1.14-.23.29-.57.47-1.03.53zm-.44-2.81c-.24 0-.42.09-.54.27-.12.18-.18.44-.18.78 0 .34.06.6.18.78.12.18.3.27.54.27.24 0 .42-.09.54-.27.12-.18.18-.44.18-.78 0-.34-.06-.6-.18-.78-.12-.18-.3-.27-.54-.27z"/></svg></button>',
+            html: '<button class="art-icon-btn art-btn-skip5" title="Forward 5s (→)"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8zm-1.1 11h-.85v-3.26l-1.01.31v-.67l1.73-.57h.13V16zm2.97-.04c-.3.04-.6.04-.88 0-.44-.06-.77-.24-1-.53-.22-.29-.33-.67-.33-1.14 0-.48.11-.86.34-1.15.23-.29.57-.46 1.01-.52.29-.04.59-.04.88 0 .44.06.77.23 1 .52.22.29.34.67.34 1.15 0 .47-.11.85-.33 1.14-.23.29-.57.47-1.03.53zm-.44-2.81c-.24 0-.42.09-.54.27-.12.18-.18.44-.18.78 0 .34.06.6.18.78.12.18.3.27.54.27.24 0 .42-.09.54-.27.12-.18.18-.44.18-.78 0-.34-.06-.6-.18-.78-.12-.18-.3-.27-.54-.27z"/></svg></button>',
             click: function () {
               self.seekRelative(5);
+              self.showQuickSeekFeedback('right', '+5s');
+            },
+          },
+          // Forward 10s button (Left controls)
+          {
+            name: 'skip-fwd-10s-btn',
+            position: 'left',
+            index: 13,
+            html: '<button class="art-icon-btn art-btn-skip10" title="Forward 10s (L)"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8zm-1.8 11h-.9v-3.26l-1.07.31v-.74l1.83-.6h.14V16zm3.3 0c-.8 0-1.4-.46-1.4-1.81 0-1.34.6-1.81 1.4-1.81s1.4.47 1.4 1.81c0 1.35-.6 1.81-1.4 1.81zm0-.6c.35 0 .5-.32.5-1.21 0-.9-.15-1.21-.5-1.21s-.5.31-.5 1.21c0 .89.15 1.21.5 1.21z"/></svg></button>',
+            click: function () {
+              self.seekRelative(10);
+              self.showQuickSeekFeedback('right', '+10s');
             },
           },
           // Previous Episode button (Left controls)
           {
             name: 'prev-ep-btn',
             position: 'left',
-            index: 13,
+            index: 14,
             html: '<button class="art-icon-btn" title="Previous Episode (P)"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2.5"></line></svg></button>',
             click: function () {
               if (typeof self.onPrevEpisode === 'function') {
@@ -391,7 +415,7 @@ class AnimePlayer {
           {
             name: 'next-ep-btn',
             position: 'left',
-            index: 14,
+            index: 15,
             html: '<button class="art-icon-btn" title="Next Episode (N)"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2.5"></line></svg></button>',
             click: function () {
               if (typeof self.onNextEpisode === 'function') {
@@ -539,12 +563,12 @@ class AnimePlayer {
                 lastTap = 0;
                 if (x < width * 0.38) {
                   e.preventDefault();
-                  self.seekRelative(-5);
-                  self.showQuickSeekFeedback('left', '-5s');
+                  self.seekRelative(-10);
+                  self.showQuickSeekFeedback('left', '-10s');
                 } else if (x > width * 0.62) {
                   e.preventDefault();
-                  self.seekRelative(5);
-                  self.showQuickSeekFeedback('right', '+5s');
+                  self.seekRelative(10);
+                  self.showQuickSeekFeedback('right', '+10s');
                 }
               } else {
                 lastTap = now;
@@ -665,6 +689,12 @@ class AnimePlayer {
       });
 
       this.art.on('video:timeupdate', () => {
+        const now = Date.now();
+        if (!self._seekTimestamp || (now - self._seekTimestamp >= 400)) {
+          self._seekTargetTime = null;
+          self._virtualTime = self.art.currentTime;
+        }
+
         if (this.art && this.art.currentTime > 0) {
           try {
             localStorage.setItem(`ani_progress_${episodeId}`, JSON.stringify({
@@ -681,6 +711,14 @@ class AnimePlayer {
           if (self.autoNext && self.art.duration > 20 && self.art.currentTime >= (self.art.duration - 0.5) && !self._episodeEndedTriggered) {
             self.triggerAutoNext();
           }
+        }
+      });
+
+      this.art.on('video:seeked', () => {
+        const now = Date.now();
+        if (!self._seekTimestamp || (now - self._seekTimestamp >= 400)) {
+          self._seekTargetTime = null;
+          self._virtualTime = self.art.currentTime;
         }
       });
 
@@ -875,21 +913,49 @@ class AnimePlayer {
   }
 
   /**
-   * Relative seeking in seconds (+5, -5, +85)
+   * Relative seeking in seconds (±5s, ±10s, +85s)
+   * Smooth, debounced target accumulation to prevent HLS pipeline freezing & glitching during rapid clicks!
    */
   seekRelative(seconds) {
     if (!this.art) return;
     this.lastSeekSeconds = seconds;
-    const duration = this.art.duration || 1420;
-    const current = (this._virtualTime !== undefined) ? this._virtualTime : (this.art.currentTime || 0);
-    const target = Math.max(0, Math.min(duration, current + seconds));
+    const video = this.art.video || this.art.template?.$video;
+    const duration = (this.art.duration && !isNaN(this.art.duration) && isFinite(this.art.duration)) ? this.art.duration : 1420;
+
+    const actualCurrent = (video && !isNaN(video.currentTime)) ? video.currentTime : (this.art.currentTime || 0);
+
+    // If rapid clicks occur within 450ms, accumulate target time from the pending seek
+    const now = Date.now();
+    let baseTime = actualCurrent;
+    if (this._seekTimestamp && (now - this._seekTimestamp < 450) && typeof this._seekTargetTime === 'number') {
+      baseTime = this._seekTargetTime;
+    }
+
+    const target = Math.max(0, Math.min(duration, baseTime + seconds));
+    this._seekTargetTime = target;
+    this._seekTimestamp = now;
     this._virtualTime = target;
+
+    // Direct seek to target
     try {
       this.art.currentTime = target;
+      if (video && Math.abs(video.currentTime - target) > 0.5) {
+        video.currentTime = target;
+      }
     } catch (_) {}
+
+    // Show clean in-player HUD feedback notice with formatted target time
     if (this.art.notice) {
-      this.art.notice.show = seconds > 0 ? `+${seconds}s` : `${seconds}s`;
+      const sign = seconds > 0 ? `+${seconds}s` : `${seconds}s`;
+      this.art.notice.show = `${sign} (${this.formatTime(target)})`;
     }
+  }
+
+  formatTime(seconds) {
+    if (isNaN(seconds) || seconds < 0) return '00:00';
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
   }
 
   /**
@@ -904,7 +970,8 @@ class AnimePlayer {
 
       const el = document.createElement('div');
       el.className = `ani-seek-ripple ani-seek-${side}`;
-      const icon = side === 'left' ? 'replay_5' : 'forward_5';
+      const is10 = String(text).includes('10');
+      const icon = side === 'left' ? (is10 ? 'replay_10' : 'replay_5') : (is10 ? 'forward_10' : 'forward_5');
       el.innerHTML = `<span class="material-symbols-outlined text-[18px]">${icon}</span><span>${text}</span>`;
       container.appendChild(el);
 
@@ -967,19 +1034,35 @@ class AnimePlayer {
         return;
       }
 
-      // Rewind 5s (ArrowLeft / J / j)
-      if (key === 'ArrowLeft' || key === 'j' || key === 'J') {
+      // Rewind 5s (ArrowLeft)
+      if (key === 'ArrowLeft') {
         e.preventDefault();
         this.seekRelative(-5);
         this.showQuickSeekFeedback('left', '-5s');
         return;
       }
 
-      // Forward 5s (ArrowRight / L / l)
-      if (key === 'ArrowRight' || key === 'l' || key === 'L') {
+      // Forward 5s (ArrowRight)
+      if (key === 'ArrowRight') {
         e.preventDefault();
         this.seekRelative(5);
         this.showQuickSeekFeedback('right', '+5s');
+        return;
+      }
+
+      // Rewind 10s (J / j)
+      if (key === 'j' || key === 'J') {
+        e.preventDefault();
+        this.seekRelative(-10);
+        this.showQuickSeekFeedback('left', '-10s');
+        return;
+      }
+
+      // Forward 10s (L / l)
+      if (key === 'l' || key === 'L') {
+        e.preventDefault();
+        this.seekRelative(10);
+        this.showQuickSeekFeedback('right', '+10s');
         return;
       }
 
