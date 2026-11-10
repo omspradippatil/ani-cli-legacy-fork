@@ -165,6 +165,154 @@
       return data?.Media || null;
     },
 
+    async getFranchiseSeasons(animeId, animeTitle = '') {
+      try {
+        const cleanTitle = (animeTitle || '')
+          .replace(/:\s*(Season|\d+(?:st|nd|rd|th)|Part|Final|Entertainment|Swordsmith|Mugen|Shippuuden|Next Generations|Thousand-Year).*$/i, '')
+          .replace(/Season \d+.*$/i, '')
+          .trim() || animeTitle;
+
+        const query = `
+          query ($id: Int, $search: String) {
+            Media(id: $id, type: ANIME) {
+              id
+              title { romaji english userPreferred }
+              format
+              status
+              episodes
+              seasonYear
+              averageScore
+              description(asHtml: false)
+              coverImage { medium large extraLarge }
+              bannerImage
+              relations {
+                edges {
+                  relationType
+                  node {
+                    id
+                    title { romaji english userPreferred }
+                    format
+                    type
+                    status
+                    episodes
+                    seasonYear
+                    averageScore
+                    coverImage { medium large extraLarge }
+                    bannerImage
+                  }
+                }
+              }
+            }
+            Page(page: 1, perPage: 15) {
+              media(type: ANIME, search: $search, sort: [START_DATE]) {
+                id
+                title { romaji english userPreferred }
+                format
+                status
+                episodes
+                seasonYear
+                averageScore
+                coverImage { medium large extraLarge }
+                bannerImage
+              }
+            }
+          }
+        `;
+
+        const data = await fetchAniList(query, {
+          id: Number(animeId) || 0,
+          search: (cleanTitle && cleanTitle.length >= 3) ? cleanTitle : undefined
+        });
+
+        const current = data?.Media;
+        const searchResults = data?.Page?.media || [];
+
+        const map = new Map();
+        if (current) {
+          map.set(current.id, { ...current, isCurrent: true, relationType: 'CURRENT' });
+        }
+
+        const relationsAnime = (current?.relations?.edges || [])
+          .filter(e => e.node?.type === 'ANIME')
+          .map(e => ({ ...e.node, relationType: e.relationType }));
+
+        relationsAnime.forEach(item => {
+          if (!map.has(item.id)) map.set(item.id, item);
+        });
+
+        if (cleanTitle && cleanTitle.length >= 3) {
+          const core = cleanTitle.toLowerCase();
+          searchResults.forEach(item => {
+            const t = (item.title?.english || item.title?.romaji || item.title?.userPreferred || '').toLowerCase();
+            if (t.includes(core.slice(0, 5)) || core.includes(t.slice(0, 5))) {
+              if (!map.has(item.id)) map.set(item.id, { ...item, relationType: 'FRANCHISE' });
+            }
+          });
+        }
+
+        const allEntries = Array.from(map.values());
+
+        const mainSeasons = [];
+        const movies = [];
+        const specials = [];
+
+        allEntries.forEach(item => {
+          const fmt = (item.format || 'TV').toUpperCase();
+          if (fmt === 'MOVIE') {
+            movies.push(item);
+          } else if (fmt === 'OVA' || fmt === 'SPECIAL' || fmt === 'ONA') {
+            if (item.episodes && item.episodes >= 10) {
+              mainSeasons.push(item);
+            } else {
+              specials.push(item);
+            }
+          } else {
+            mainSeasons.push(item);
+          }
+        });
+
+        mainSeasons.sort((a, b) => (a.seasonYear || 9999) - (b.seasonYear || 9999));
+        movies.sort((a, b) => (a.seasonYear || 9999) - (b.seasonYear || 9999));
+        specials.sort((a, b) => (a.seasonYear || 9999) - (b.seasonYear || 9999));
+
+        mainSeasons.forEach((s, idx) => {
+          const rawTitle = s.title?.english || s.title?.romaji || '';
+          const seasonMatch = rawTitle.match(/(?:Season\s*(\d+)|(\d+)(?:st|nd|rd|th)\s*Season)/i);
+          if (seasonMatch) {
+            const num = seasonMatch[1] || seasonMatch[2];
+            s.seasonLabel = `Season ${num}`;
+          } else {
+            s.seasonLabel = `Season ${idx + 1}`;
+          }
+        });
+
+        movies.forEach((m, idx) => {
+          m.seasonLabel = `Movie ${idx + 1}`;
+        });
+
+        specials.forEach((sp, idx) => {
+          sp.seasonLabel = `OVA / Special ${idx + 1}`;
+        });
+
+        return {
+          currentId: animeId,
+          all: [...mainSeasons, ...movies, ...specials],
+          seasons: mainSeasons,
+          movies,
+          specials
+        };
+      } catch (err) {
+        console.warn(`[AniListClient] getFranchiseSeasons(${animeId}) error:`, err.message);
+        return {
+          currentId: animeId,
+          all: [],
+          seasons: [],
+          movies: [],
+          specials: []
+        };
+      }
+    },
+
     async browseAnime({ page = 1, perPage = 24, genre, sort = 'popularity', search, format, status }) {
       const sortMap = {
         'score': 'SCORE_DESC',

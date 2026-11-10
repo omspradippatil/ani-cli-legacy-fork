@@ -1049,6 +1049,22 @@
               <span id="episodes-total-count" class="font-mono text-xs text-gray-400 font-bold">0 EP</span>
             </div>
 
+            <!-- Franchise / Season Switcher Dropdown (Allows switching seasons directly in player) -->
+            <div id="watch-season-selector-wrapper" class="hidden flex flex-col gap-1.5 pb-2 border-b border-white/[0.06]">
+              <div class="flex items-center justify-between text-[11px] font-mono text-gray-400">
+                <span class="flex items-center gap-1 font-semibold text-secondary">
+                  <span class="material-symbols-outlined text-[14px]">auto_stories</span>
+                  <span>Season / Series</span>
+                </span>
+                <span id="watch-season-badge" class="px-1.5 py-0.5 rounded bg-surface-container-high text-white text-[10px] font-bold">1 Season</span>
+              </div>
+              <div class="relative">
+                <select id="watch-season-select" class="w-full bg-surface-container-high border border-white/[0.1] hover:border-primary/50 text-white text-xs font-semibold rounded-xl px-3 py-2 pr-8 appearance-none focus:outline-none focus:border-primary cursor-pointer transition-colors">
+                </select>
+                <span class="material-symbols-outlined text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[18px]">expand_more</span>
+              </div>
+            </div>
+
             <!-- Search Episode Filter -->
             <div class="relative">
               <input type="text" id="episode-search-filter" class="w-full bg-surface-container-low border border-white/[0.06] rounded-xl px-3 py-2 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-secondary" placeholder="Filter episode number..." enterkeyhint="search">
@@ -1342,6 +1358,138 @@
             </button>
           </div>
         </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       ANIME DETAIL & SEASON SELECTION MODAL (Franchise Timeline & Hub)
+       ========================================================================== -->
+  <div id="anime-detail-modal" class="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 md:p-6 bg-black/85 backdrop-blur-xl hidden" role="dialog" aria-modal="true" aria-labelledby="detail-modal-title">
+    <div class="relative w-full max-w-4xl bg-surface-container-lowest border-0 sm:border border-white/[0.12] rounded-none sm:rounded-3xl shadow-[0_32px_100px_rgba(0,0,0,0.95)] flex flex-col h-full sm:h-auto sm:max-h-[90vh] overflow-hidden">
+      
+      <!-- Sticky Close Button -->
+      <button id="anime-detail-modal-close" class="absolute top-3 right-3 sm:top-4 sm:right-4 z-30 w-10 h-10 rounded-full bg-black/75 backdrop-blur-md text-gray-300 hover:text-white hover:bg-black flex items-center justify-center border border-white/10 shadow-lg cursor-pointer transition-all active:scale-90" title="Close" aria-label="Close modal">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+
+      <!-- Scrollable Modal Content -->
+      <div id="anime-detail-modal-scroll" class="flex-1 overflow-y-auto overscroll-contain">
+        
+        <!-- Loading State Skeleton -->
+        <div id="anime-detail-modal-loader" class="hidden p-8 flex flex-col items-center justify-center min-h-[300px] gap-3">
+          <div class="w-10 h-10 border-3 border-secondary/30 border-t-secondary rounded-full animate-spin"></div>
+          <span class="text-xs font-mono text-gray-400">Loading franchise seasons &amp; stream info...</span>
+        </div>
+
+        <!-- Content Body -->
+        <div id="anime-detail-modal-body" class="flex flex-col">
+          
+          <!-- Hero Banner & Poster Header -->
+          <div class="relative w-full bg-surface-container-high overflow-hidden">
+            <!-- Background Backdrop with Dark Overlay -->
+            <div class="absolute inset-0 z-0">
+              <img id="detail-modal-banner" src="" alt="Backdrop" class="w-full h-full object-cover opacity-35 blur-[1px]">
+              <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/80 to-transparent"></div>
+            </div>
+
+            <!-- Content on top of banner -->
+            <div class="relative z-10 p-4 sm:p-6 md:p-8 flex flex-col sm:flex-row items-start gap-4 sm:gap-6 pt-12 sm:pt-8">
+              <!-- Poster Image -->
+              <div class="relative w-28 sm:w-36 md:w-44 aspect-[2/3] rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl flex-shrink-0 bg-surface-container-low mx-auto sm:mx-0">
+                <img id="detail-modal-poster" src="" alt="Poster" class="w-full h-full object-cover">
+                <span id="detail-modal-format" class="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/70 backdrop-blur-md text-white font-mono text-[10px] font-bold border border-white/[0.1]">TV</span>
+              </div>
+
+              <!-- Metadata & Quick Play -->
+              <div class="flex-1 flex flex-col gap-2.5 min-w-0 text-center sm:text-left">
+                <div class="flex flex-col gap-1">
+                  <h2 id="detail-modal-title" class="text-lg sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-tight line-clamp-2">Anime Title</h2>
+                  <span id="detail-modal-native" class="text-xs font-mono text-gray-400 line-clamp-1"></span>
+                </div>
+
+                <!-- Info Chips -->
+                <div class="flex items-center justify-center sm:justify-start gap-2 flex-wrap font-mono text-xs text-gray-300">
+                  <span id="detail-modal-score" class="px-2 py-0.5 rounded-lg bg-primary-container/20 border border-primary/30 text-primary font-bold flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                    <span>8.5</span>
+                  </span>
+                  <span id="detail-modal-year" class="px-2 py-0.5 rounded-lg bg-surface-container border border-white/[0.08] text-gray-300">2024</span>
+                  <span id="detail-modal-status" class="px-2 py-0.5 rounded-lg bg-surface-container border border-white/[0.08] text-gray-300">Finished</span>
+                  <span id="detail-modal-ep-count" class="px-2 py-0.5 rounded-lg bg-secondary/15 border border-secondary/30 text-secondary font-bold">24 EP</span>
+                  <span class="px-2 py-0.5 rounded-lg bg-surface-container border border-white/[0.08] text-white font-bold">SUB • DUB</span>
+                </div>
+
+                <!-- Genres Badges -->
+                <div id="detail-modal-genres" class="flex items-center justify-center sm:justify-start gap-1.5 flex-wrap"></div>
+
+                <!-- Synopsis with clamp -->
+                <p id="detail-modal-synopsis" class="text-xs sm:text-sm text-gray-300 leading-relaxed line-clamp-3 sm:line-clamp-4 mt-1 text-left"></p>
+
+                <!-- Action Bar -->
+                <div class="flex items-center justify-center sm:justify-start gap-3 pt-2 flex-wrap">
+                  <button id="detail-modal-play-btn" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary-container to-primary text-white font-bold text-xs sm:text-sm uppercase tracking-wider shadow-[0_0_20px_rgba(255,79,115,0.35)] hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 cursor-pointer">
+                    <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+                    <span id="detail-modal-play-btn-text">Start Watching</span>
+                  </button>
+                  <button id="detail-modal-watchlist-btn" class="px-4 py-2.5 rounded-xl bg-surface-container border border-white/[0.1] hover:border-white/30 text-gray-200 hover:text-white font-semibold text-xs sm:text-sm active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer">
+                    <span id="detail-modal-watchlist-icon" class="material-symbols-outlined text-[18px]">bookmark_add</span>
+                    <span id="detail-modal-watchlist-text">Watchlist</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Franchise Seasons & Timeline Selection Section -->
+          <div class="p-4 sm:p-6 md:p-8 flex flex-col gap-4 border-t border-white/[0.08] bg-surface-container-lowest">
+            
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-secondary text-[22px]">layers</span>
+                <div>
+                  <h3 class="text-sm sm:text-base font-bold text-white uppercase tracking-wider">Seasons &amp; Franchise Order</h3>
+                  <p class="text-[11px] font-mono text-gray-400">Select a season or movie to choose episodes and play</p>
+                </div>
+              </div>
+              <span id="detail-modal-franchise-count" class="px-2.5 py-1 rounded-lg bg-surface-container border border-white/[0.08] font-mono text-xs text-gray-300 font-bold">1 Season</span>
+            </div>
+
+            <!-- Season Selector Tabs/Cards Container -->
+            <div id="detail-modal-seasons-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-3">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <!-- Selected Season Episode Browser Section -->
+            <div id="detail-modal-episodes-section" class="flex flex-col gap-3 pt-3 border-t border-white/[0.06]">
+              
+              <div class="flex items-center justify-between flex-wrap gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary text-[18px]">format_list_numbered</span>
+                  <span id="detail-modal-active-season-heading" class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Season 1 Episodes</span>
+                  <span id="detail-modal-active-ep-count" class="font-mono text-xs text-gray-400">(0)</span>
+                </div>
+
+                <!-- Episode Filter Input -->
+                <div class="relative w-full sm:w-48">
+                  <input type="text" id="detail-modal-ep-filter" class="w-full bg-surface-container-low border border-white/[0.08] rounded-xl px-3 py-1.5 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-secondary" placeholder="Find episode...">
+                </div>
+              </div>
+
+              <!-- Range Tabs if > 50 eps -->
+              <div id="detail-modal-range-tabs" class="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none"></div>
+
+              <!-- Episodes Grid -->
+              <div id="detail-modal-episodes-list" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 max-h-[280px] overflow-y-auto pr-1">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
 
     </div>

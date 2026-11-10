@@ -268,6 +268,41 @@ document.addEventListener('DOMContentLoaded', () => {
   // Toast Container
   const toastContainer = document.getElementById('toast-container');
 
+  // Anime Detail & Season Selection Modal Elements
+  const animeDetailModal = document.getElementById('anime-detail-modal');
+  const animeDetailModalClose = document.getElementById('anime-detail-modal-close');
+  const animeDetailModalScroll = document.getElementById('anime-detail-modal-scroll');
+  const animeDetailModalLoader = document.getElementById('anime-detail-modal-loader');
+  const animeDetailModalBody = document.getElementById('anime-detail-modal-body');
+  const detailModalBanner = document.getElementById('detail-modal-banner');
+  const detailModalPoster = document.getElementById('detail-modal-poster');
+  const detailModalFormat = document.getElementById('detail-modal-format');
+  const detailModalTitle = document.getElementById('detail-modal-title');
+  const detailModalNative = document.getElementById('detail-modal-native');
+  const detailModalScore = document.getElementById('detail-modal-score');
+  const detailModalYear = document.getElementById('detail-modal-year');
+  const detailModalStatus = document.getElementById('detail-modal-status');
+  const detailModalEpCount = document.getElementById('detail-modal-ep-count');
+  const detailModalGenres = document.getElementById('detail-modal-genres');
+  const detailModalSynopsis = document.getElementById('detail-modal-synopsis');
+  const detailModalPlayBtn = document.getElementById('detail-modal-play-btn');
+  const detailModalPlayBtnText = document.getElementById('detail-modal-play-btn-text');
+  const detailModalWatchlistBtn = document.getElementById('detail-modal-watchlist-btn');
+  const detailModalWatchlistIcon = document.getElementById('detail-modal-watchlist-icon');
+  const detailModalWatchlistText = document.getElementById('detail-modal-watchlist-text');
+  const detailModalFranchiseCount = document.getElementById('detail-modal-franchise-count');
+  const detailModalSeasonsGrid = document.getElementById('detail-modal-seasons-grid');
+  const detailModalActiveSeasonHeading = document.getElementById('detail-modal-active-season-heading');
+  const detailModalActiveEpCount = document.getElementById('detail-modal-active-ep-count');
+  const detailModalEpFilter = document.getElementById('detail-modal-ep-filter');
+  const detailModalRangeTabs = document.getElementById('detail-modal-range-tabs');
+  const detailModalEpisodesList = document.getElementById('detail-modal-episodes-list');
+
+  // Watch Room Season Switcher Elements
+  const watchSeasonSelectorWrapper = document.getElementById('watch-season-selector-wrapper');
+  const watchSeasonBadge = document.getElementById('watch-season-badge');
+  const watchSeasonSelect = document.getElementById('watch-season-select');
+
   // ============================================================================
   // INITIALIZATION & PLAYER INSTANTIATION
   // ============================================================================
@@ -898,6 +933,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       syncFilterUIWithState();
       executeBrowse();
+    } else if (path === 'anime' || path === 'detail') {
+      views.home.classList.remove('hidden');
+      const animeId = params.get('anime') || params.get('id');
+      if (animeId) {
+        window.openAnimeDetailModal(animeId);
+      }
     } else if (path === 'watch') {
       views.watch.classList.remove('hidden');
       const animeId = params.get('anime') || params.get('id');
@@ -1245,7 +1286,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     heroInfoBtn.onclick = () => {
-      navigateTo(`watch?anime=${item.id}&ep=1&mode=${state.currentMode}`);
+      window.openAnimeDetailModal(item.id);
     };
   }
 
@@ -1665,7 +1706,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const epCount = item.episodes ? `${item.episodes} EP` : 'Simulcast';
 
       return `
-        <div class="anime-card group relative bg-surface-container-low border border-white/[0.08] hover:border-primary/50 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 flex flex-col cursor-pointer" onclick="window.location.hash='watch?anime=${item.id}&ep=1'">
+        <div class="anime-card group relative bg-surface-container-low border border-white/[0.08] hover:border-primary/50 rounded-2xl overflow-hidden shadow-lg transition-all duration-300 flex flex-col cursor-pointer" onclick="window.openAnimeDetailModal('${item.id}')">
           <div class="relative aspect-[2/3] w-full bg-surface-container-high overflow-hidden">
             <img src="${poster}" alt="${title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
             <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-transparent to-transparent opacity-90"></div>
@@ -1680,7 +1721,10 @@ document.addEventListener('DOMContentLoaded', () => {
               </span>
             </div>
 
-            <div class="absolute top-2 right-2">
+            <div class="absolute top-2 right-2 flex items-center gap-1.5">
+              <button class="w-8 h-8 rounded-full bg-black/70 backdrop-blur-md text-gray-300 hover:text-secondary active:scale-90 flex items-center justify-center transition-all shadow-md cursor-pointer" title="Seasons & Episodes" onclick="event.stopPropagation(); window.openAnimeDetailModal('${item.id}')">
+                <span class="material-symbols-outlined text-[17px]">layers</span>
+              </button>
               <button class="w-8 h-8 rounded-full bg-black/70 backdrop-blur-md text-gray-300 hover:text-primary active:scale-90 flex items-center justify-center transition-all shadow-md cursor-pointer" title="Add to Watchlist" onclick="event.stopPropagation(); window.toggleWatchlistAnimeById('${item.id}', '${escapeQuotes(title)}', '${poster}')">
                 <span class="material-symbols-outlined text-[17px]">bookmark_add</span>
               </button>
@@ -2035,7 +2079,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const cleanDesc = (item.description || 'No synopsis provided.').replace(/<[^>]*>/g, '');
 
         return `
-          <div class="p-3.5 sm:p-4 rounded-2xl bg-surface-container-low border border-white/[0.08] hover:border-primary/50 shadow-xl transition-all flex flex-row items-start gap-3 sm:gap-5 group cursor-pointer" onclick="window.location.hash='watch?anime=${item.id}&ep=1'">
+          <div class="p-3.5 sm:p-4 rounded-2xl bg-surface-container-low border border-white/[0.08] hover:border-primary/50 shadow-xl transition-all flex flex-row items-start gap-3 sm:gap-5 group cursor-pointer" onclick="window.openAnimeDetailModal('${item.id}')">
             <img src="${poster}" alt="${title}" class="w-20 sm:w-28 md:w-32 h-28 sm:h-40 md:h-44 object-cover rounded-xl border border-white/[0.08] flex-shrink-0 group-hover:scale-102 transition-transform">
             <div class="flex flex-col justify-between flex-1 gap-2 min-w-0">
               <div class="flex flex-col gap-1">
@@ -2055,8 +2099,8 @@ document.addEventListener('DOMContentLoaded', () => {
               </div>
 
               <div class="flex items-center gap-2 pt-1 flex-wrap">
-                <button class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-primary-container text-white text-xs font-bold uppercase tracking-wider shadow-md hover:brightness-110 active:scale-95 transition-all flex items-center gap-1 sm:gap-1.5 cursor-pointer" onclick="event.stopPropagation(); window.location.hash='watch?anime=${item.id}&ep=1'">
-                  <span class="material-symbols-outlined text-[16px]">play_arrow</span>Play
+                <button class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-primary-container text-white text-xs font-bold uppercase tracking-wider shadow-md hover:brightness-110 active:scale-95 transition-all flex items-center gap-1 sm:gap-1.5 cursor-pointer" onclick="event.stopPropagation(); window.openAnimeDetailModal('${item.id}')">
+                  <span class="material-symbols-outlined text-[16px]">layers</span>Seasons &amp; Play
                 </button>
                 <button class="px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-surface-container-high border border-white/[0.08] text-gray-300 hover:text-white text-xs font-semibold active:scale-95 transition-all flex items-center gap-1 sm:gap-1.5 cursor-pointer" onclick="event.stopPropagation(); window.toggleWatchlistAnimeById('${item.id}', '${escapeQuotes(title)}', '${poster}')">
                   <span class="material-symbols-outlined text-[16px]">bookmark_add</span>Watchlist
@@ -2074,7 +2118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const score = item.averageScore ? (item.averageScore / 10).toFixed(1) : '8.5';
 
         return `
-          <div class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-surface-container-low border border-white/[0.06] hover:border-primary/50 flex items-center justify-between gap-3 sm:gap-4 transition-all cursor-pointer group" onclick="window.location.hash='watch?anime=${item.id}&ep=1'">
+          <div class="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-surface-container-low border border-white/[0.06] hover:border-primary/50 flex items-center justify-between gap-3 sm:gap-4 transition-all cursor-pointer group" onclick="window.openAnimeDetailModal('${item.id}')">
             <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
               <span class="font-mono text-xs text-gray-500 font-bold w-5 sm:w-6 text-center">${idx + 1}</span>
               <img src="${poster}" alt="${title}" class="w-8 sm:w-9 h-11 sm:h-12 object-cover rounded-md flex-shrink-0">
@@ -2258,6 +2302,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (episodesTotalCount) episodesTotalCount.textContent = `${episodes.length} EP`;
       renderEpisodeQueue(episodes, state.currentEpisodeIndex);
 
+      // In-Player Franchise Season Switcher
+      setupWatchRoomSeasonSwitcher(animeId, currentTitle, anime.franchise);
+
       // Load Current Episode Stream
       const currentEp = episodes[state.currentEpisodeIndex] || { id: `${animeId}-${episodeNum}`, number: episodeNum };
       if (currentEpTitle) currentEpTitle.textContent = `Episode ${currentEp.number || episodeNum}`;
@@ -2406,6 +2453,475 @@ document.addEventListener('DOMContentLoaded', () => {
     tiles.forEach(tile => {
       const num = parseInt(tile.dataset.num);
       tile.style.display = (num >= start && num <= end) ? 'flex' : 'none';
+    });
+  }
+
+  // ============================================================================
+  // WATCH ROOM IN-PLAYER FRANCHISE SEASON SWITCHER
+  // ============================================================================
+
+  async function setupWatchRoomSeasonSwitcher(animeId, title, existingFranchise = null) {
+    if (!watchSeasonSelectorWrapper || !watchSeasonSelect) return;
+
+    try {
+      let franchise = existingFranchise;
+      if (!franchise || !franchise.all || !franchise.all.length) {
+        if (window.AniListClient) {
+          franchise = await window.AniListClient.getFranchiseSeasons(animeId, title).catch(() => null);
+        }
+        if (!franchise || !franchise.all || !franchise.all.length) {
+          const res = await fetch(`/api/anime/${animeId}/seasons?title=${encodeURIComponent(title)}`).catch(() => null);
+          if (res && res.ok) {
+            const j = await res.json().catch(() => ({}));
+            if (j.success && j.data) franchise = j.data;
+          }
+        }
+      }
+
+      if (!franchise || !franchise.all || franchise.all.length <= 1) {
+        watchSeasonSelectorWrapper.classList.add('hidden');
+        return;
+      }
+
+      const totalSeasons = franchise.seasons ? franchise.seasons.length : 1;
+      if (watchSeasonBadge) {
+        watchSeasonBadge.textContent = `${totalSeasons} Season${totalSeasons > 1 ? 's' : ''}`;
+      }
+
+      watchSeasonSelect.innerHTML = franchise.all.map(item => {
+        const itemTitle = item.title?.english || item.title?.romaji || 'Anime';
+        const label = item.seasonLabel || item.format || 'Series';
+        const eps = item.episodes ? `${item.episodes} EP` : (item.format || 'TV');
+        const isSel = String(item.id) === String(animeId);
+        return `<option value="${item.id}" ${isSel ? 'selected' : ''}>${label}: ${itemTitle} (${eps})</option>`;
+      }).join('');
+
+      watchSeasonSelectorWrapper.classList.remove('hidden');
+
+      watchSeasonSelect.onchange = (e) => {
+        const nextId = e.target.value;
+        if (nextId && String(nextId) !== String(animeId)) {
+          navigateTo(`watch?anime=${nextId}&ep=1&mode=${state.currentMode}`);
+        }
+      };
+    } catch (err) {
+      console.warn('[WatchRoom] Franchise switcher error:', err);
+      watchSeasonSelectorWrapper.classList.add('hidden');
+    }
+  }
+
+  // ============================================================================
+  // ANIME DETAIL MODAL & FRANCHISE SEASON HUB
+  // ============================================================================
+
+  let detailModalActiveAnime = null;
+  let detailModalActiveSeason = null;
+  let detailModalFranchise = null;
+  let detailModalAllEpisodes = [];
+  let detailModalActiveRange = 1;
+  const DETAIL_PAGE_SIZE = 50;
+
+  window.closeAnimeDetailModal = function () {
+    if (!animeDetailModal) return;
+    animeDetailModal.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+  };
+
+  if (animeDetailModalClose) {
+    animeDetailModalClose.addEventListener('click', window.closeAnimeDetailModal);
+  }
+  if (animeDetailModal) {
+    animeDetailModal.addEventListener('click', (e) => {
+      if (e.target === animeDetailModal) {
+        window.closeAnimeDetailModal();
+      }
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && animeDetailModal && !animeDetailModal.classList.contains('hidden')) {
+      window.closeAnimeDetailModal();
+    }
+  });
+
+  window.openAnimeDetailModal = async function (animeId, initialSeasonId = null) {
+    if (!animeDetailModal) return;
+
+    animeDetailModal.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+    if (animeDetailModalScroll) animeDetailModalScroll.scrollTop = 0;
+
+    if (animeDetailModalLoader) animeDetailModalLoader.classList.remove('hidden');
+    if (animeDetailModalBody) animeDetailModalBody.classList.add('opacity-30');
+
+    try {
+      let cached = (state.rawTrendingList || []).find(a => String(a.id) === String(animeId)) ||
+                   (state.spotlightList || []).find(a => String(a.id) === String(animeId)) ||
+                   (state.browseResults || []).find(a => String(a.id) === String(animeId)) ||
+                   (state.userWatchlist || []).find(a => String(a.anime_id) === String(animeId)) ||
+                   (state.userHistory || []).find(a => String(a.anime_id) === String(animeId));
+
+      const titleHint = cached?.title?.english || cached?.title?.romaji || cached?.anime_title || '';
+
+      let animeData = null;
+      let franchiseData = null;
+
+      const [detailsRes, seasonsRes] = await Promise.allSettled([
+        (window.AniListClient)
+          ? window.AniListClient.getAnimeDetails(animeId)
+          : fetch(`/api/anime/${animeId}${titleHint ? `?title=${encodeURIComponent(titleHint)}` : ''}`).then(r => r.json()).then(j => j.data),
+        (window.AniListClient)
+          ? window.AniListClient.getFranchiseSeasons(animeId, titleHint)
+          : fetch(`/api/anime/${animeId}/seasons${titleHint ? `?title=${encodeURIComponent(titleHint)}` : ''}`).then(r => r.json()).then(j => j.data)
+      ]);
+
+      if (detailsRes.status === 'fulfilled' && detailsRes.value) {
+        animeData = detailsRes.value;
+      }
+      if (seasonsRes.status === 'fulfilled' && seasonsRes.value) {
+        franchiseData = seasonsRes.value;
+      }
+
+      if (!animeData && cached) animeData = cached;
+      if (!animeData) {
+        const fallbackRes = await fetch(`/api/anime/${animeId}`).then(r => r.json()).catch(() => ({}));
+        if (fallbackRes.success && fallbackRes.data) animeData = fallbackRes.data;
+      }
+
+      if (!animeData || (!animeData.title && !titleHint)) {
+        showToast('Anime details could not be loaded', 'error');
+        window.closeAnimeDetailModal();
+        return;
+      }
+
+      detailModalActiveAnime = animeData;
+
+      if (!franchiseData || !franchiseData.seasons || franchiseData.seasons.length === 0) {
+        franchiseData = {
+          currentId: animeId,
+          all: [{ ...animeData, seasonLabel: 'Season 1', isCurrent: true }],
+          seasons: [{ ...animeData, seasonLabel: 'Season 1', isCurrent: true }],
+          movies: [],
+          specials: []
+        };
+      }
+      detailModalFranchise = franchiseData;
+
+      let selectedSeason = null;
+      if (initialSeasonId) {
+        selectedSeason = franchiseData.all.find(s => String(s.id) === String(initialSeasonId));
+      }
+      if (!selectedSeason) {
+        selectedSeason = franchiseData.all.find(s => String(s.id) === String(animeId)) || franchiseData.seasons[0] || franchiseData.all[0];
+      }
+      detailModalActiveSeason = selectedSeason;
+
+      renderDetailModalHeader(animeData);
+      renderDetailModalSeasons(franchiseData, selectedSeason);
+      await loadDetailModalEpisodes(selectedSeason);
+
+    } catch (err) {
+      console.error('[DetailModal] Load error:', err);
+      showToast('Error loading anime details', 'error');
+    } finally {
+      if (animeDetailModalLoader) animeDetailModalLoader.classList.add('hidden');
+      if (animeDetailModalBody) animeDetailModalBody.classList.remove('opacity-30');
+    }
+  };
+
+  function renderDetailModalHeader(anime) {
+    const title = anime.title?.english || anime.title?.romaji || anime.title?.userPreferred || anime.anime_title || 'Anime';
+    const native = anime.title?.native || '';
+    const banner = anime.bannerImage || anime.coverImage?.extraLarge || anime.coverImage?.large || '';
+    const poster = anime.coverImage?.extraLarge || anime.coverImage?.large || anime.coverImage?.medium || anime.poster || '';
+    const score = anime.averageScore ? (anime.averageScore / 10).toFixed(1) : '8.5';
+    const year = anime.seasonYear || anime.startDate?.year || '2024';
+    const status = (anime.status || 'FINISHED').replace(/_/g, ' ');
+    const format = anime.format || 'TV';
+    const epCount = anime.episodes ? `${anime.episodes} EP` : (anime.totalEpisodes ? `${anime.totalEpisodes} EP` : 'Simulcast');
+    const desc = (anime.description || 'No synopsis available.').replace(/<[^>]*>/g, '');
+
+    if (detailModalBanner) detailModalBanner.src = banner || poster;
+    if (detailModalPoster) detailModalPoster.src = poster;
+    if (detailModalFormat) detailModalFormat.textContent = format;
+    if (detailModalTitle) detailModalTitle.textContent = title;
+    if (detailModalNative) detailModalNative.textContent = native;
+    if (detailModalScore) {
+      detailModalScore.innerHTML = `<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span><span>${score}</span>`;
+    }
+    if (detailModalYear) detailModalYear.textContent = year;
+    if (detailModalStatus) detailModalStatus.textContent = status;
+    if (detailModalEpCount) detailModalEpCount.textContent = epCount;
+
+    if (detailModalGenres) {
+      detailModalGenres.innerHTML = (anime.genres || ['Anime']).map(g => `
+        <span class="px-2 py-0.5 rounded-lg bg-surface-container border border-white/[0.08] text-gray-300 text-[11px] font-medium">${g}</span>
+      `).join('');
+    }
+
+    if (detailModalSynopsis) {
+      detailModalSynopsis.textContent = desc;
+    }
+
+    let resumeEp = 1;
+    let resumeTime = 0;
+    if (state.userHistory && state.userHistory.length > 0) {
+      const hist = state.userHistory.find(h => String(h.anime_id) === String(anime.id));
+      if (hist && Number(hist.episode_num) > 0) {
+        resumeEp = Number(hist.episode_num);
+        resumeTime = Number(hist.progress_seconds) || 0;
+      }
+    }
+
+    if (detailModalPlayBtn) {
+      if (resumeEp > 1 || resumeTime > 30) {
+        if (detailModalPlayBtnText) detailModalPlayBtnText.textContent = `Resume Ep ${resumeEp}`;
+      } else {
+        if (detailModalPlayBtnText) detailModalPlayBtnText.textContent = `Start Watching Ep 1`;
+      }
+      detailModalPlayBtn.onclick = () => {
+        window.closeAnimeDetailModal();
+        window.navigateToWatch(detailModalActiveSeason ? detailModalActiveSeason.id : anime.id, resumeEp, resumeTime);
+      };
+    }
+
+    updateDetailModalWatchlistButton(anime.id, title, poster);
+  }
+
+  function updateDetailModalWatchlistButton(animeId, title, poster) {
+    if (!detailModalWatchlistBtn) return;
+    const isSaved = (state.userWatchlist || []).some(w => String(w.anime_id) === String(animeId));
+    if (detailModalWatchlistIcon) {
+      detailModalWatchlistIcon.textContent = isSaved ? 'bookmark' : 'bookmark_add';
+    }
+    if (detailModalWatchlistText) {
+      detailModalWatchlistText.textContent = isSaved ? 'In Watchlist' : 'Watchlist';
+    }
+    detailModalWatchlistBtn.classList.toggle('border-primary/50', isSaved);
+    detailModalWatchlistBtn.classList.toggle('text-primary', isSaved);
+
+    detailModalWatchlistBtn.onclick = async () => {
+      await window.toggleWatchlistAnimeById(animeId, title, poster);
+      updateDetailModalWatchlistButton(animeId, title, poster);
+    };
+  }
+
+  function renderDetailModalSeasons(franchise, activeSeason) {
+    if (!detailModalSeasonsGrid) return;
+
+    if (detailModalFranchiseCount) {
+      const sCount = franchise.seasons ? franchise.seasons.length : 1;
+      const mCount = franchise.movies ? franchise.movies.length : 0;
+      detailModalFranchiseCount.textContent = `${sCount} Season${sCount > 1 ? 's' : ''}${mCount > 0 ? ` • ${mCount} Movie${mCount > 1 ? 's' : ''}` : ''}`;
+    }
+
+    detailModalSeasonsGrid.innerHTML = franchise.all.map(item => {
+      const isSelected = String(item.id) === String(activeSeason.id);
+      const title = item.title?.english || item.title?.romaji || 'Anime';
+      const poster = item.coverImage?.large || item.coverImage?.medium || detailModalActiveAnime.coverImage?.large || '';
+      const label = item.seasonLabel || item.format || 'Season';
+      const year = item.seasonYear || '—';
+      const eps = item.episodes ? `${item.episodes} EP` : (item.format || 'TV');
+
+      return `
+        <div class="relative p-2.5 rounded-2xl border transition-all cursor-pointer flex flex-col gap-2 group ${
+          isSelected
+            ? 'bg-secondary/15 border-secondary shadow-[0_0_20px_rgba(0,218,243,0.25)]'
+            : 'bg-surface-container-low border-white/[0.08] hover:border-white/20 hover:bg-surface-container'
+        }" onclick="window.selectDetailModalSeason(${item.id})">
+          
+          <div class="relative aspect-video w-full rounded-xl overflow-hidden bg-surface-container-high flex-shrink-0">
+            <img src="${poster}" alt="${title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+            
+            <div class="absolute top-1.5 left-1.5">
+              <span class="px-1.5 py-0.5 rounded bg-black/70 backdrop-blur-md text-[9px] font-mono font-bold text-white border border-white/10">
+                ${item.format || 'TV'}
+              </span>
+            </div>
+
+            ${isSelected ? `
+              <div class="absolute top-1.5 right-1.5">
+                <span class="px-1.5 py-0.5 rounded bg-secondary text-on-secondary text-[9px] font-mono font-black uppercase tracking-wider shadow-sm">
+                  Active
+                </span>
+              </div>
+            ` : ''}
+
+            <div class="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between font-mono text-[10px] text-gray-300">
+              <span>${year}</span>
+              <span class="font-bold text-white">${eps}</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col min-w-0">
+            <span class="text-xs font-black uppercase tracking-wide truncate ${isSelected ? 'text-secondary' : 'text-white group-hover:text-primary'}">${label}</span>
+            <span class="text-[11px] text-gray-400 line-clamp-1">${title}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.selectDetailModalSeason = async function (seasonId) {
+    if (!detailModalFranchise) return;
+    const found = detailModalFranchise.all.find(s => String(s.id) === String(seasonId));
+    if (!found) return;
+
+    detailModalActiveSeason = found;
+    renderDetailModalSeasons(detailModalFranchise, found);
+
+    if (detailModalPlayBtnText) {
+      detailModalPlayBtnText.textContent = `Start Watching ${found.seasonLabel || 'Season'}`;
+    }
+    if (detailModalPlayBtn) {
+      detailModalPlayBtn.onclick = () => {
+        window.closeAnimeDetailModal();
+        window.navigateToWatch(found.id, 1, 0);
+      };
+    }
+
+    await loadDetailModalEpisodes(found);
+  };
+
+  async function loadDetailModalEpisodes(season) {
+    if (!detailModalEpisodesList) return;
+
+    const seasonTitle = season.title?.english || season.title?.romaji || 'Anime';
+    const label = season.seasonLabel || 'Season';
+
+    if (detailModalActiveSeasonHeading) {
+      detailModalActiveSeasonHeading.textContent = `${label} Episodes`;
+    }
+
+    detailModalEpisodesList.innerHTML = '<div class="col-span-full py-8 text-center text-gray-400 font-mono text-xs"><div class="w-6 h-6 border-2 border-secondary border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>Loading episodes...</div>';
+
+    let episodes = [];
+    try {
+      const epRes = await fetch(`/api/anime/${season.id}?title=${encodeURIComponent(seasonTitle)}`).catch(() => null);
+      if (epRes && epRes.ok) {
+        const j = await epRes.json().catch(() => ({}));
+        if (j.success && j.data && Array.isArray(j.data.episodes) && j.data.episodes.length > 0) {
+          episodes = j.data.episodes;
+        }
+      }
+
+      if (!episodes.length) {
+        const searchRes = await fetch(`/api/episodes?query=${encodeURIComponent(seasonTitle)}`).catch(() => null);
+        if (searchRes && searchRes.ok) {
+          const sj = await searchRes.json().catch(() => ({}));
+          if (sj.success && Array.isArray(sj.data) && sj.data.length > 0) {
+            episodes = sj.data;
+          }
+        }
+      }
+
+      if (!episodes.length && season.episodes && Number(season.episodes) > 0) {
+        const count = Math.min(Number(season.episodes), 1500);
+        episodes = Array.from({ length: count }, (_, i) => ({
+          id: `${season.id}-${i + 1}`,
+          number: i + 1,
+          title: `Episode ${i + 1}`
+        }));
+      }
+    } catch (err) {
+      console.warn('[DetailModal] Episodes fetch fallback:', err);
+    }
+
+    detailModalAllEpisodes = episodes;
+    if (detailModalActiveEpCount) {
+      detailModalActiveEpCount.textContent = `(${episodes.length})`;
+    }
+
+    detailModalActiveRange = 1;
+    renderDetailModalEpisodes(episodes, 1);
+    setupDetailModalRangeTabs(episodes);
+  }
+
+  function setupDetailModalRangeTabs(episodes) {
+    if (!detailModalRangeTabs) return;
+    if (episodes.length <= DETAIL_PAGE_SIZE) {
+      detailModalRangeTabs.innerHTML = '';
+      detailModalRangeTabs.classList.add('hidden');
+      return;
+    }
+
+    detailModalRangeTabs.classList.remove('hidden');
+    const totalPages = Math.ceil(episodes.length / DETAIL_PAGE_SIZE);
+    detailModalRangeTabs.innerHTML = Array.from({ length: totalPages }, (_, idx) => {
+      const start = idx * DETAIL_PAGE_SIZE + 1;
+      const end = Math.min((idx + 1) * DETAIL_PAGE_SIZE, episodes.length);
+      const isSel = idx + 1 === detailModalActiveRange;
+      return `
+        <button class="px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold transition-all cursor-pointer flex-shrink-0 ${
+          isSel
+            ? 'bg-secondary text-on-secondary shadow-sm'
+            : 'bg-surface-container-high text-gray-400 hover:text-white hover:bg-surface-container-highest'
+        }" onclick="window.selectDetailModalRange(${idx + 1})">
+          ${start}-${end}
+        </button>
+      `;
+    }).join('');
+  }
+
+  window.selectDetailModalRange = function (page) {
+    detailModalActiveRange = page;
+    setupDetailModalRangeTabs(detailModalAllEpisodes);
+    renderDetailModalEpisodes(detailModalAllEpisodes, page);
+  };
+
+  function renderDetailModalEpisodes(episodes, page = 1) {
+    if (!detailModalEpisodesList) return;
+
+    if (!episodes || !episodes.length) {
+      detailModalEpisodesList.innerHTML = '<div class="col-span-full py-8 text-center text-gray-500 font-mono text-xs">No episodes available yet. Click "Start Watching" to stream.</div>';
+      return;
+    }
+
+    const filterText = (detailModalEpFilter ? detailModalEpFilter.value.trim().toLowerCase() : '');
+    let displayList = episodes;
+
+    if (filterText) {
+      displayList = episodes.filter(ep => {
+        const num = String(ep.number || '');
+        const title = (ep.title || '').toLowerCase();
+        return num.includes(filterText) || title.includes(filterText);
+      });
+    } else if (episodes.length > DETAIL_PAGE_SIZE) {
+      const startIdx = (page - 1) * DETAIL_PAGE_SIZE;
+      displayList = episodes.slice(startIdx, startIdx + DETAIL_PAGE_SIZE);
+    }
+
+    if (!displayList.length) {
+      detailModalEpisodesList.innerHTML = '<div class="col-span-full py-6 text-center text-gray-500 font-mono text-xs">No episodes match your filter.</div>';
+      return;
+    }
+
+    const currentSeasonId = detailModalActiveSeason ? detailModalActiveSeason.id : detailModalActiveAnime.id;
+
+    detailModalEpisodesList.innerHTML = displayList.map(ep => {
+      const num = ep.number || 1;
+      const isWatched = (state.userHistory || []).some(h => String(h.anime_id) === String(currentSeasonId) && Number(h.episode_num) === Number(num));
+
+      return `
+        <button class="group p-2.5 rounded-xl border flex flex-col items-center justify-center gap-1 transition-all cursor-pointer active:scale-95 ${
+          isWatched
+            ? 'bg-surface-container-low border-primary/30 hover:border-primary text-gray-300'
+            : 'bg-surface-container border-white/[0.08] hover:border-secondary hover:bg-surface-container-high text-white'
+        }" onclick="window.closeAnimeDetailModal(); window.navigateToWatch(${currentSeasonId}, ${num}, 0)" title="Play Episode ${num}">
+          <span class="font-mono text-xs font-black tracking-wider group-hover:text-secondary transition-colors">EP ${num}</span>
+          <span class="material-symbols-outlined text-[16px] text-gray-500 group-hover:text-secondary transition-colors">play_circle</span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  if (detailModalEpFilter) {
+    let filterDebounce = null;
+    detailModalEpFilter.addEventListener('input', () => {
+      clearTimeout(filterDebounce);
+      filterDebounce = setTimeout(() => {
+        renderDetailModalEpisodes(detailModalAllEpisodes, detailModalActiveRange);
+      }, 200);
     });
   }
 
@@ -2734,7 +3250,7 @@ if (btnToggleWatchlist) {
       const score = media.averageScore ? (media.averageScore / 10).toFixed(1) : '8.5';
 
       return `
-        <div class="p-2 rounded-xl bg-surface-container-low hover:bg-surface-container border border-white/[0.04] hover:border-primary/40 flex items-center gap-3 transition-all cursor-pointer group" onclick="window.location.hash='watch?anime=${media.id}&ep=1'">
+        <div class="p-2 rounded-xl bg-surface-container-low hover:bg-surface-container border border-white/[0.04] hover:border-primary/40 flex items-center gap-3 transition-all cursor-pointer group" onclick="window.openAnimeDetailModal('${media.id}')">
           <img src="${poster}" alt="${title}" class="w-10 h-14 object-cover rounded-lg flex-shrink-0">
           <div class="flex flex-col min-w-0 flex-1">
             <span class="text-xs font-bold text-white group-hover:text-primary transition-colors truncate">${title}</span>
@@ -3279,7 +3795,7 @@ accountSubTabs.querySelectorAll('.account-tab').forEach(t => {
           const score = item.averageScore ? (item.averageScore / 10).toFixed(1) : '8.5';
 
           return `
-            <div class="p-2 rounded-lg hover:bg-surface-container flex items-center gap-3 transition-colors cursor-pointer" onclick="window.location.hash='watch?anime=${item.id}&ep=1'; document.getElementById('search-dropdown').classList.add('hidden');">
+            <div class="p-2 rounded-lg hover:bg-surface-container flex items-center gap-3 transition-colors cursor-pointer" onclick="window.openAnimeDetailModal('${item.id}'); document.getElementById('search-dropdown').classList.add('hidden');">
               <img src="${poster}" alt="${title}" class="w-9 h-12 object-cover rounded-md flex-shrink-0">
               <div class="flex flex-col min-w-0 flex-1">
                 <span class="text-xs font-bold text-white truncate">${title}</span>
@@ -3408,7 +3924,7 @@ accountSubTabs.querySelectorAll('.account-tab').forEach(t => {
           const score = item.averageScore ? (item.averageScore / 10).toFixed(1) : '8.5';
 
           return `
-            <div class="p-2.5 rounded-xl bg-surface-container border border-white/[0.06] hover:bg-surface-container-high flex items-center gap-3 transition-colors cursor-pointer active:scale-98" onclick="window.location.hash='watch?anime=${item.id}&ep=1'; const m = document.getElementById('mobile-search-modal'); if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }">
+            <div class="p-2.5 rounded-xl bg-surface-container border border-white/[0.06] hover:bg-surface-container-high flex items-center gap-3 transition-colors cursor-pointer active:scale-98" onclick="window.openAnimeDetailModal('${item.id}'); const m = document.getElementById('mobile-search-modal'); if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }">
               <img src="${poster}" alt="${title}" class="w-10 h-14 object-cover rounded-lg flex-shrink-0">
               <div class="flex flex-col min-w-0 flex-1">
                 <span class="text-xs font-bold text-white truncate">${title}</span>

@@ -127,6 +127,21 @@ function isGenericTitle(t) {
 }
 
 /**
+ * GET /api/anime/:id/seasons
+ * Fetches complete franchise timeline, seasons, movies, and relations
+ */
+router.get('/anime/:id/seasons', async (req, res) => {
+  const id = req.params.id;
+  const title = req.query.title || '';
+  try {
+    const franchise = await anilist.getFranchiseSeasons(id, title);
+    res.json({ success: true, data: franchise });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
  * GET /api/anime/:id
  * Fetches AniList anime info and resolves its streamable episode list
  */
@@ -187,6 +202,12 @@ router.get('/anime/:id', async (req, res) => {
       }
     }
 
+    let franchise = null;
+    try {
+      const fTitle = details?.title?.english || details?.title?.romaji || titleParam || '';
+      franchise = await anilist.getFranchiseSeasons(id, fTitle);
+    } catch (_) {}
+
     res.json({
       success: true,
       data: {
@@ -194,7 +215,8 @@ router.get('/anime/:id', async (req, res) => {
         totalEpisodes: details.episodes,
         episodes: episodes,
         streamEpisodes: episodes,
-        hiAnimeMatch
+        hiAnimeMatch,
+        franchise
       }
     });
   } catch (err) {

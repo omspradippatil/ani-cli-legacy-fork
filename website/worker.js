@@ -794,6 +794,18 @@ export default {
         return jsonResponse({ success: true, data: episodes, hiAnimeMatch });
       }
 
+      // --- METADATA: ANIME SEASONS & FRANCHISE TIMELINE ---
+      if (pathname.startsWith('/api/anime/') && pathname.endsWith('/seasons')) {
+        const animeId = pathname.replace('/api/anime/', '').replace('/seasons', '');
+        const titleParam = url.searchParams.get('title') || '';
+        try {
+          const franchise = await anilist.getFranchiseSeasons(animeId, titleParam);
+          return jsonResponse({ success: true, data: franchise });
+        } catch (err) {
+          return jsonResponse({ success: false, error: err.message }, 500);
+        }
+      }
+
       // --- METADATA: ANIME DETAILS + EPISODES ---
       if (pathname.startsWith('/api/anime/')) {
         const animeId = pathname.replace('/api/anime/', '');
@@ -893,6 +905,12 @@ export default {
           };
         }
 
+        let franchise = null;
+        try {
+          const franchiseTitle = details?.title?.english || details?.title?.romaji || titleParam || '';
+          franchise = await anilist.getFranchiseSeasons(animeId, franchiseTitle);
+        } catch (_) {}
+
         return jsonResponse({
           success: true,
           data: {
@@ -902,7 +920,8 @@ export default {
             totalEpisodes: details?.episodes || episodes.length,
             episodes,
             streamEpisodes: episodes,
-            hiAnimeMatch
+            hiAnimeMatch,
+            franchise
           }
         });
       }
