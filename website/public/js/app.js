@@ -995,15 +995,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Auto-Orientation Sensor: Automatically enters fullscreen when phone is turned landscape, and exits in portrait
   function setupAutoOrientationFullscreen() {
+    const isMobileDevice = window.matchMedia('(pointer: coarse)').matches && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (!isMobileDevice) return;
+
     let orientationTimeout = null;
     const handleOrientation = () => {
       clearTimeout(orientationTimeout);
       orientationTimeout = setTimeout(() => {
         if (state.activeView !== 'watch' || !state.player || !state.player.art) return;
-        const isLandscape = (window.innerWidth > window.innerHeight) ||
-          window.matchMedia('(orientation: landscape)').matches || 
-          (window.screen?.orientation && window.screen.orientation.type.startsWith('landscape')) ||
-          (Math.abs(window.orientation || 0) === 90);
+        const isLandscape = (window.screen?.orientation && window.screen.orientation.type.startsWith('landscape')) ||
+          (typeof window.orientation === 'number' && Math.abs(window.orientation) === 90) ||
+          (window.innerWidth > window.innerHeight && window.matchMedia('(orientation: landscape)').matches);
+
         const isCurrentlyFull = !!(
           document.fullscreenElement ||
           document.webkitFullscreenElement ||
@@ -1011,12 +1014,11 @@ document.addEventListener('DOMContentLoaded', () => {
           state.player.art.fullscreenWeb ||
           document.body.classList.contains('player-in-fullscreen')
         );
-        if (window.innerWidth < 900 || window.innerHeight < 600) {
-          if (isLandscape && !isCurrentlyFull) {
-            state.player.enterFullscreen();
-          } else if (!isLandscape && isCurrentlyFull) {
-            state.player.exitFullscreen();
-          }
+
+        if (isLandscape && !isCurrentlyFull) {
+          state.player.enterFullscreen();
+        } else if (!isLandscape && isCurrentlyFull) {
+          state.player.exitFullscreen();
         }
       }, 200);
     };

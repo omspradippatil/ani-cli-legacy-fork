@@ -628,6 +628,10 @@ body {
    ========================================================================== */
 
 /* Hide background navigation, headers, and toasts in fullscreen */
+body.player-in-fullscreen {
+  overflow: hidden !important;
+}
+
 body.player-in-fullscreen header,
 body.player-in-fullscreen #mobile-bottom-nav,
 body.player-in-fullscreen #toast-container,

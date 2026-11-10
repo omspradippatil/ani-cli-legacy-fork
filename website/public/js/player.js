@@ -594,31 +594,23 @@ class AnimePlayer {
 
       // Synchronize with native browser & device fullscreen events
       const onNativeFsChange = () => {
-        const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement || (self.art && (self.art.fullscreen || self.art.fullscreenWeb)));
+        const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement);
+        if (!isFull && self.art && self.art.fullscreen) {
+          self.art.fullscreen = false;
+        }
         self.handleFullscreenChange(isFull, 'onNativeFsChange');
       };
       document.addEventListener('fullscreenchange', onNativeFsChange);
       document.addEventListener('webkitfullscreenchange', onNativeFsChange);
       this._nativeFsListener = onNativeFsChange;
 
-      // Handle physical device rotation while in fullscreen
-      const onOrientationChange = () => {
-        if (document.body.classList.contains('player-in-fullscreen')) {
-          setTimeout(() => {
-            const isPortrait = window.matchMedia('(orientation: portrait)').matches || window.innerHeight > window.innerWidth;
-            if (isPortrait) {
-              if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                document.body.classList.add('player-forced-landscape');
-              }
-            } else {
-              document.body.classList.remove('player-forced-landscape');
-            }
-          }, 150);
+      // Double-click on video (desktop) toggles fullscreen
+      this.art.on('dblclick', () => {
+        const isMobile = window.matchMedia('(pointer: coarse)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if (!isMobile) {
+          self.toggleFullscreen();
         }
-      };
-      window.addEventListener('orientationchange', onOrientationChange);
-      window.addEventListener('resize', onOrientationChange);
-      this._orientationListener = onOrientationChange;
+      });
 
       // Clean raw or escaped HTML tags in subtitles so <i> or <b> never display as literal text
       const cleanSubLine = (el) => {
@@ -1070,10 +1062,9 @@ class AnimePlayer {
     }
 
     const isCurrentlyFull = !!(
-      this.art.fullscreen ||
-      this.art.fullscreenWeb ||
       document.fullscreenElement ||
       document.webkitFullscreenElement ||
+      (this.art && (this.art.fullscreen || this.art.fullscreenWeb)) ||
       document.body.classList.contains('player-in-fullscreen')
     );
 
@@ -1088,52 +1079,60 @@ class AnimePlayer {
 
   async enterFullscreen() {
     if (!this.art) return false;
-    document.body.classList.add('player-in-fullscreen');
 
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    // Detect iPhone specifically (iOS phones only allow native fullscreen via video.webkitEnterFullscreen)
+    const isIPhone = /iPhone|iPod/i.test(navigator.userAgent);
 
-    // 1. On iOS Safari, use native video.webkitEnterFullscreen() for true edge-to-edge hardware player
-    if (isIOS && this.art.video && typeof this.art.video.webkitEnterFullscreen === 'function') {
+    // 1. On iPhone, use native video.webkitEnterFullscreen() for true edge-to-edge hardware player
+    if (isIPhone && this.art.video && typeof this.art.video.webkitEnterFullscreen === 'function') {
       try {
         this.art.video.webkitEnterFullscreen();
         const onIosEnd = () => {
-          this.art.video.removeEventListener('webkitendfullscreen', onIosEnd);
+          this.art.video?.removeEventListener('webkitendfullscreen', onIosEnd);
           this.exitFullscreen();
         };
         this.art.video.addEventListener('webkitendfullscreen', onIosEnd, { once: true });
-        this.updateFullscreenIcons(true);
-        if (typeof this.onFullscreenChange === 'function') {
-          this.onFullscreenChange(true);
-        }
+        this.handleFullscreenChange(true, 'ios-hardware');
         return true;
       } catch (err) {
-        console.warn('[Player] iOS webkitEnterFullscreen failed, falling back to CSS fullscreen:', err);
+        console.warn('[Player] iOS webkitEnterFullscreen failed, falling back:', err);
       }
     }
 
-    // 2. Hardware / Native Fullscreen (Android Chrome, Desktop Chrome, Firefox, Edge)
-    // Invokes native fullscreen so browser URL address bar and system bars are completely hidden
+    // 2. Hardware / Native Fullscreen (Desktop Chrome, Safari, Firefox, Edge, Android Chrome, iPad)
+    // Directly invokes native fullscreen so browser tabs, URL address bar, and system bars vanish completely!
     const playerEl = this.art.template?.$player || document.querySelector('.art-video-player');
+    let nativeSuccess = false;
 
     if (!document.fullscreenElement && !document.webkitFullscreenElement) {
       try {
         if (playerEl && playerEl.requestFullscreen) {
-          await playerEl.requestFullscreen().catch(() => {});
+          await playerEl.requestFullscreen();
+          nativeSuccess = true;
         } else if (this.art.video && this.art.video.requestFullscreen) {
-          await this.art.video.requestFullscreen().catch(() => {});
+          await this.art.video.requestFullscreen();
+          nativeSuccess = true;
         } else if (playerEl && playerEl.webkitRequestFullscreen) {
-          await playerEl.webkitRequestFullscreen().catch(() => {});
+          await playerEl.webkitRequestFullscreen();
+          nativeSuccess = true;
+        } else if (this.art.video && typeof this.art.video.webkitEnterFullscreen === 'function') {
+          this.art.video.webkitEnterFullscreen();
+          nativeSuccess = true;
         }
       } catch (err) {
         console.warn('[Player] Native requestFullscreen error:', err);
       }
+    } else {
+      nativeSuccess = true;
     }
 
-    // Always enable web fullscreen styling for full 100dvw x 100dvh isolation
-    this.art.fullscreenWeb = true;
-    document.body.classList.add('player-in-fullscreen');
+    // 3. Fallback: ONLY enable web fullscreen styling if native hardware fullscreen is unsupported or denied
+    if (!nativeSuccess && !document.fullscreenElement && !document.webkitFullscreenElement) {
+      console.log('[Player] Falling back to CSS web fullscreen');
+      this.art.fullscreenWeb = true;
+    }
 
-    // 3. Screen Orientation Lock: Auto-rotate mobile screen to landscape
+    // 4. Screen Orientation Lock: Auto-rotate mobile screen to landscape
     try {
       if (screen.orientation && typeof screen.orientation.lock === 'function') {
         screen.orientation.lock('landscape').catch(() => {
@@ -1148,16 +1147,14 @@ class AnimePlayer {
       }
     } catch (_) {}
 
-    this.updateFullscreenIcons(true);
-    if (typeof this.onFullscreenChange === 'function') {
-      this.onFullscreenChange(true);
-    }
+    this.handleFullscreenChange(true, 'enterFullscreen');
     return true;
   }
 
   async exitFullscreen() {
     if (!this.art) return false;
 
+    // 1. Exit native browser hardware fullscreen
     try {
       if (document.fullscreenElement) {
         await document.exitFullscreen().catch(() => {});
@@ -1166,11 +1163,15 @@ class AnimePlayer {
       }
     } catch (_) {}
 
-    if (this.art.fullscreen) this.art.fullscreen = false;
-    if (this.art.fullscreenWeb) this.art.fullscreenWeb = false;
+    // 2. Clear Artplayer fullscreen states
+    if (typeof this.art.fullscreen !== 'undefined' && this.art.fullscreen) {
+      try { this.art.fullscreen = false; } catch (_) {}
+    }
+    if (this.art.fullscreenWeb) {
+      this.art.fullscreenWeb = false;
+    }
 
-    document.body.classList.remove('player-in-fullscreen');
-
+    // 3. Unlock screen orientation on mobile
     try {
       if (screen.orientation && typeof screen.orientation.unlock === 'function') {
         screen.orientation.unlock();
@@ -1183,27 +1184,32 @@ class AnimePlayer {
       }
     } catch (_) {}
 
-    this.updateFullscreenIcons(false);
-    if (typeof this.onFullscreenChange === 'function') {
-      this.onFullscreenChange(false);
-    }
+    this.handleFullscreenChange(false, 'exitFullscreen');
     return false;
   }
 
-  handleFullscreenChange(isFull) {
-    const isActuallyFull = !!(
-      isFull ||
-      (this.art && (this.art.fullscreen || this.art.fullscreenWeb)) ||
-      document.fullscreenElement ||
-      document.webkitFullscreenElement
-    );
+  handleFullscreenChange(isFull, source) {
+    const hasNativeFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    const hasWebFs = !!(this.art && this.art.fullscreenWeb);
+
+    let isActuallyFull = false;
+    if (isFull === true) {
+      isActuallyFull = true;
+    } else if (isFull === false) {
+      isActuallyFull = hasNativeFs || hasWebFs;
+    } else {
+      isActuallyFull = hasNativeFs || hasWebFs;
+    }
+
     if (isActuallyFull) {
       document.body.classList.add('player-in-fullscreen');
     } else {
       document.body.classList.remove('player-in-fullscreen');
-      if (screen.orientation && typeof screen.orientation.unlock === 'function') {
-        try { screen.orientation.unlock(); } catch (_) {}
-      }
+      try {
+        if (screen.orientation && typeof screen.orientation.unlock === 'function') {
+          screen.orientation.unlock();
+        }
+      } catch (_) {}
     }
 
     this.updateFullscreenIcons(isActuallyFull);
