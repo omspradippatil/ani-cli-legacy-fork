@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-01T06:54:41.485Z",
+  "timestamp": "2026-11-10T16:45:25.301Z",
   "baseUrl": "http://127.0.0.1:3001",
   "total": 87,
   "passed": 87,
@@ -11,21 +11,21 @@
       "name": "Website loads with HTTP 200 and valid document title",
       "passed": true,
       "details": "Title: \"Om CLI — Watch Anime Free in HD | Dual-Audio HLS & Android TV Sync\"",
-      "durationMs": 634
+      "durationMs": 732
     },
     {
       "suite": "1. Initial Load & Shell",
       "name": "Document viewport and meta tags are properly defined",
       "passed": true,
       "details": "Viewport: width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover",
-      "durationMs": 20
+      "durationMs": 15
     },
     {
       "suite": "1. Initial Load & Shell",
       "name": "Global Navbar header exists and is pinned with backdrop blur",
       "passed": true,
       "details": "Header pinned and visible",
-      "durationMs": 8
+      "durationMs": 12
     },
     {
       "suite": "1. Initial Load & Shell",
@@ -46,70 +46,70 @@
       "name": "Navigating to #browse activates Browse view and hides Home view",
       "passed": true,
       "details": "Browse view active",
-      "durationMs": 347
+      "durationMs": 348
     },
     {
       "suite": "2. Navigation & Routing",
       "name": "Navigating to #watchlist opens Watchlist or triggers Auth Modal for guest",
       "passed": true,
       "details": "Watchlist navigation verified",
-      "durationMs": 534
+      "durationMs": 531
     },
     {
       "suite": "2. Navigation & Routing",
       "name": "Navigating to #home restores Home feed view",
       "passed": true,
       "details": "Home view restored",
-      "durationMs": 306
+      "durationMs": 308
     },
     {
       "suite": "2. Navigation & Routing",
       "name": "Clicking brand logo returns to #home",
       "passed": true,
       "details": "Brand logo navigation verified",
-      "durationMs": 323
+      "durationMs": 321
     },
     {
       "suite": "2. Navigation & Routing",
       "name": "Browser URL hash updates accurately on view changes",
       "passed": true,
       "details": "Hash changes match active view",
-      "durationMs": 449
+      "durationMs": 453
     },
     {
       "suite": "3. Hero Spotlight Carousel",
       "name": "Hero banner displays title, score, year, format, and synopsis",
       "passed": true,
-      "details": "Hero: \"BLACK CLOVER SEASON 2\" | ★ star\n8.7 RATING | TV | 2026",
-      "durationMs": 4
+      "details": "Hero: \"NIA LISTON: THE MERCILESS MAIDEN\" | ★ star\n7.5 RATING | TV | 2026",
+      "durationMs": 7
     },
     {
       "suite": "3. Hero Spotlight Carousel",
       "name": "Hero carousel indicator dots are rendered and interactive",
       "passed": true,
       "details": "5 carousel slides available",
-      "durationMs": 347
+      "durationMs": 337
     },
     {
       "suite": "3. Hero Spotlight Carousel",
       "name": "Hero \"Play\" CTA button is present and clickable",
       "passed": true,
       "details": "Play CTA: \"play_arrow\nWatch Episode 1\"",
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "suite": "3. Hero Spotlight Carousel",
       "name": "Hero \"Watchlist\" CTA prompts auth modal for guest visitors",
       "passed": true,
       "details": "Guest watchlist attempt correctly triggered auth modal & dismissed cleanly",
-      "durationMs": 451
+      "durationMs": 455
     },
     {
       "suite": "3. Hero Spotlight Carousel",
       "name": "Hero \"More Info\" button triggers navigation",
       "passed": true,
       "details": "More Info CTA verified",
-      "durationMs": 1
+      "durationMs": 3
     },
     {
       "suite": "4. Home Genre Chips Bar",
@@ -123,147 +123,147 @@
       "name": "\"All Genres\" is active by default",
       "passed": true,
       "details": "All Genres active",
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "suite": "4. Home Genre Chips Bar",
       "name": "Clicking \"Action\" chip activates it and filters trending cards",
       "passed": true,
-      "details": "Action filtered: 16 cards displayed",
-      "durationMs": 344
+      "details": "Action filtered: 10 cards displayed",
+      "durationMs": 348
     },
     {
       "suite": "4. Home Genre Chips Bar",
       "name": "Clicking \"Shounen\" chip handles filtering or routing gracefully",
       "passed": true,
       "details": "Shounen interaction OK (URL: http://127.0.0.1:3001/#home)",
-      "durationMs": 328
+      "durationMs": 330
     },
     {
       "suite": "4. Home Genre Chips Bar",
       "name": "Clicking active chip again or \"Browse All\" navigates to Browse view",
       "passed": true,
       "details": "Browse All CTA verified",
-      "durationMs": 451
+      "durationMs": 440
     },
     {
       "suite": "4. Home Genre Chips Bar",
       "name": "Quick Audio Switcher (SUB / DUB) in header toggles state",
       "passed": true,
       "details": "Global audio switcher verified",
-      "durationMs": 176
+      "durationMs": 175
     },
     {
       "suite": "5. Catalog Grids on Home",
       "name": "Trending Grid renders anime cards with posters and ratings",
       "passed": true,
-      "details": "17 Trending cards. First: \"Black Clover Season 2\"",
-      "durationMs": 8
+      "details": "13 Trending cards. First: \"Nia Liston: The Merciless Maiden\"",
+      "durationMs": 5
     },
     {
       "suite": "5. Catalog Grids on Home",
       "name": "Most Popular Grid renders anime cards",
       "passed": true,
       "details": "20 Popular cards. First: \"Attack on Titan\"",
-      "durationMs": 6
+      "durationMs": 5
     },
     {
       "suite": "5. Catalog Grids on Home",
       "name": "Top Rated Grid renders anime cards",
       "passed": true,
       "details": "20 Top Rated cards. First: \"Frieren: Beyond Journey’s End\"",
-      "durationMs": 4
+      "durationMs": 5
     },
     {
       "suite": "5. Catalog Grids on Home",
       "name": "Anime card has bookmark/watchlist quick action button",
       "passed": true,
       "details": "Card bookmark button exists",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "suite": "5. Catalog Grids on Home",
       "name": "Anime card click navigates to Watch Room",
       "passed": true,
-      "details": "Navigated to: http://127.0.0.1:3001/#watch?anime=195604&ep=1&mode=sub",
-      "durationMs": 634
+      "details": "Navigated to: http://127.0.0.1:3001/#watch?anime=206949&ep=1&mode=sub",
+      "durationMs": 641
     },
     {
       "suite": "6. Global Desktop Search",
       "name": "Typing \"Naruto\" triggers floating dropdown with matching titles",
       "passed": true,
       "details": "6 matches found. Top: \"Naruto TV • ★ 8.0\"",
-      "durationMs": 1553
+      "durationMs": 1575
     },
     {
       "suite": "6. Global Desktop Search",
       "name": "Search dropdown contains \"View All Results\" link to Browse",
       "passed": true,
       "details": "Dropdown link: \"View All Results →\"",
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "suite": "6. Global Desktop Search",
       "name": "Clicking outside closes the live search dropdown",
       "passed": true,
       "details": "Dropdown successfully closed",
-      "durationMs": 343
+      "durationMs": 341
     },
     {
       "suite": "6. Global Desktop Search",
       "name": "Pressing Enter in search input navigates to #browse?search=...",
       "passed": true,
       "details": "Navigated to: http://127.0.0.1:3001/#browse?search=Bleach",
-      "durationMs": 610
+      "durationMs": 617
     },
     {
       "suite": "6. Global Desktop Search",
       "name": "Search input placeholder is informative",
       "passed": true,
       "details": "Placeholder: \"Search anime, studios, genres...\"",
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "suite": "7. Mobile Search Modal",
       "name": "Opening mobile search modal via mobile search toggle button",
       "passed": true,
       "details": "Mobile search modal opened",
-      "durationMs": 332
+      "durationMs": 333
     },
     {
       "suite": "7. Mobile Search Modal",
       "name": "Mobile search modal displays trending tags",
       "passed": true,
       "details": "Tags: Chainsaw Man, Solo Leveling, Demon Slayer, Jujutsu Kaisen, One Piece",
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "suite": "7. Mobile Search Modal",
       "name": "Clicking trending search tag \"Chainsaw Man\" populates input and triggers search",
       "passed": true,
       "details": "Tag click populated and triggered search",
-      "durationMs": 1024
+      "durationMs": 1027
     },
     {
       "suite": "7. Mobile Search Modal",
       "name": "Mobile search clear button resets search input and results",
       "passed": true,
       "details": "Clear button works",
-      "durationMs": 216
+      "durationMs": 238
     },
     {
       "suite": "7. Mobile Search Modal",
       "name": "Mobile search close button dismisses modal",
       "passed": true,
       "details": "Modal dismissed cleanly",
-      "durationMs": 337
+      "durationMs": 331
     },
     {
       "suite": "8. Advanced Browse & Filters",
       "name": "Browse search input renders with clear button",
       "passed": true,
       "details": "Browse input and clear button present",
-      "durationMs": 3
+      "durationMs": 5
     },
     {
       "suite": "8. Advanced Browse & Filters",
@@ -284,7 +284,7 @@
       "name": "Changing sort dropdown re-executes browse query",
       "passed": true,
       "details": "Sorted by popularity: 24 cards",
-      "durationMs": 807
+      "durationMs": 809
     },
     {
       "suite": "8. Advanced Browse & Filters",
@@ -298,63 +298,63 @@
       "name": "Format filter switches between All, TV Series, Movie",
       "passed": true,
       "details": "Format filter applied (MOVIE)",
-      "durationMs": 853
+      "durationMs": 839
     },
     {
       "suite": "8. Advanced Browse & Filters",
       "name": "Release Status filter switches between All, Airing, Finished",
       "passed": true,
       "details": "Status filter applied (FINISHED)",
-      "durationMs": 848
+      "durationMs": 838
     },
     {
       "suite": "8. Advanced Browse & Filters",
       "name": "Genre filter matrix renders checkboxes for all catalog genres",
       "passed": true,
       "details": "18 Genre matrix checkboxes rendered",
-      "durationMs": 6
+      "durationMs": 7
     },
     {
       "suite": "8. Advanced Browse & Filters",
       "name": "Selecting a genre checkbox in matrix filters catalog accurately",
       "passed": true,
       "details": "Romance filter applied: 24 cards displayed",
-      "durationMs": 1045
+      "durationMs": 1048
     },
     {
       "suite": "8. Advanced Browse & Filters",
       "name": "Reset filters button clears all filters and restores default state",
       "passed": true,
       "details": "All filters reset",
-      "durationMs": 815
+      "durationMs": 852
     },
     {
       "suite": "9. Browse View Modes",
       "name": "Detailed view mode renders meta list with descriptions",
       "passed": true,
       "details": "Detailed view: 24 entries",
-      "durationMs": 116
+      "durationMs": 85
     },
     {
       "suite": "9. Browse View Modes",
       "name": "Compact view mode renders high-density feed",
       "passed": true,
       "details": "Compact view: 24 entries",
-      "durationMs": 818
+      "durationMs": 829
     },
     {
       "suite": "9. Browse View Modes",
       "name": "Grid view mode restores multi-column poster cards",
       "passed": true,
       "details": "Grid view restored: 24 cards",
-      "durationMs": 64
+      "durationMs": 1348
     },
     {
       "suite": "10. Watch Room & Player",
       "name": "Watch view activates with breadcrumb navigation",
       "passed": true,
-      "details": "Breadcrumbs: \"BLACK CLOVER SEASON 2\" / EPISODE 1",
-      "durationMs": 3
+      "details": "Breadcrumbs: \"NIA LISTON: THE MERCILESS MAIDEN\" / EPISODE 1",
+      "durationMs": 4
     },
     {
       "suite": "10. Watch Room & Player",
@@ -368,77 +368,77 @@
       "name": "SUB and DUB audio toggles exist in player toolbar",
       "passed": true,
       "details": "Audio mode toggles present",
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "suite": "10. Watch Room & Player",
       "name": "Streaming Quality button & menu render with auto option",
       "passed": true,
       "details": "Quality selector verified",
-      "durationMs": 261
+      "durationMs": 267
     },
     {
       "suite": "10. Watch Room & Player",
       "name": "Captions (CC) toggle button is present and clickable",
       "passed": true,
       "details": "Captions status: \"CC ON\"",
-      "durationMs": 2
+      "durationMs": 5
     },
     {
       "suite": "10. Watch Room & Player",
       "name": "Skip Intro (+85s) button is present and clickable",
       "passed": true,
       "details": "Skip Intro (+85s) button verified",
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "suite": "10. Watch Room & Player",
       "name": "Anime Details synopsis card renders metadata",
       "passed": true,
-      "details": "Details: \"Black Clover Season 2\" | ★ 8.7",
-      "durationMs": 4
+      "details": "Details: \"Nia Liston: The Merciless Maiden\" | ★ 7.5",
+      "durationMs": 12
     },
     {
       "suite": "11. Episode Queue & Controls",
       "name": "Episode queue sidebar renders with episode list and search filter",
       "passed": true,
       "details": "Episode queue sidebar verified",
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "suite": "11. Episode Queue & Controls",
       "name": "Next and Previous episode buttons exist in player controls",
       "passed": true,
       "details": "Prev and Next episode buttons verified",
-      "durationMs": 2
+      "durationMs": 4
     },
     {
       "suite": "11. Episode Queue & Controls",
       "name": "Recommendations panel \"You Might Also Like\" renders",
       "passed": true,
       "details": "Recommendations container verified",
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "suite": "12. Authentication & Account",
       "name": "Sign In button in header opens Auth modal",
       "passed": true,
       "details": "Auth modal opened",
-      "durationMs": 357
+      "durationMs": 355
     },
     {
       "suite": "12. Authentication & Account",
       "name": "Auth modal toggles between \"Sign In\" and \"Create Account\"",
       "passed": true,
       "details": "Sign In & Create Account tabs toggle cleanly",
-      "durationMs": 435
+      "durationMs": 489
     },
     {
       "suite": "12. Authentication & Account",
       "name": "1-Click Demo Login button authenticates test user",
       "passed": true,
       "details": "1-Click Demo Login succeeded (User session active)",
-      "durationMs": 51
+      "durationMs": 87
     },
     {
       "suite": "12. Authentication & Account",
@@ -452,28 +452,28 @@
       "name": "Navigating to #account displays user statistics dashboard",
       "passed": true,
       "details": "User dashboard rendered. Mean Score: 4.0 ★",
-      "durationMs": 16
+      "durationMs": 18
     },
     {
       "suite": "12. Authentication & Account",
       "name": "Account tabs (Watchlist, History, Preferences, Settings) toggle cleanly",
       "passed": true,
       "details": "All 4 account tabs verified",
-      "durationMs": 483
+      "durationMs": 475
     },
     {
       "suite": "12. Authentication & Account",
       "name": "Playback preferences controls render (Audio, Quality, Auto-skip, Auto-next)",
       "passed": true,
       "details": "Preferences controls verified",
-      "durationMs": 8
+      "durationMs": 13
     },
     {
       "suite": "13. Footer, APK & Donate",
       "name": "Footer contains valid Android TV APK download link",
       "passed": true,
       "details": "APK link: https://github.com/omspradippatil/ani-cli/raw/master/ani-cli-production-signed.apk",
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "suite": "13. Footer, APK & Donate",
@@ -487,28 +487,28 @@
       "name": "Footer Quick Links contains \"Donate via Razorpay\"",
       "passed": true,
       "details": "3 Razorpay links present in footer",
-      "durationMs": 4
+      "durationMs": 2
     },
     {
       "suite": "13. Footer, APK & Donate",
       "name": "Footer bottom bar contains \"Donate (Razorpay)\" pill button",
       "passed": true,
       "details": "Bottom bar Donate pill button verified",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "suite": "13. Footer, APK & Donate",
       "name": "Footer displays 2026 Om CLI copyright and open-source attribution",
       "passed": true,
       "details": "Copyright and author credit verified",
-      "durationMs": 1
+      "durationMs": 3
     },
     {
       "suite": "14. Backend API & Edge",
       "name": "GET /api/trending returns 200 with list of anime objects",
       "passed": true,
       "details": "20 trending items returned",
-      "durationMs": 5
+      "durationMs": 6
     },
     {
       "suite": "14. Backend API & Edge",
@@ -529,49 +529,49 @@
       "name": "GET /api/search?q=naruto returns matching Naruto anime",
       "passed": true,
       "details": "Top search result: \"Naruto\"",
-      "durationMs": 584
+      "durationMs": 568
     },
     {
       "suite": "14. Backend API & Edge",
       "name": "GET /api/browse?search=bleach returns matching Bleach anime without seed leak",
       "passed": true,
       "details": "Browse search result: \"Bleach\"",
-      "durationMs": 584
+      "durationMs": 541
     },
     {
       "suite": "14. Backend API & Edge",
       "name": "GET /download/tv-apk responds with HTTP 200 (download) or 302 (redirect) for APK",
       "passed": true,
       "details": "Direct download served (HTTP 200)",
-      "durationMs": 61
+      "durationMs": 57
     },
     {
       "suite": "14. Backend API & Edge",
       "name": "GET /ani-cli-tv.apk responds with HTTP 200 (download) or 302 (redirect) for APK",
       "passed": true,
       "details": "Direct download served (HTTP 200)",
-      "durationMs": 62
+      "durationMs": 38
     },
     {
       "suite": "14. Backend API & Edge",
       "name": "GET /donate responds with HTTP 302 redirecting to Razorpay",
       "passed": true,
       "details": "Redirects to: https://razorpay.me/@ompradippatil",
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "suite": "15. Mobile Viewport (375x812)",
       "name": "Mobile page loads and renders thumb navigation bar",
       "passed": true,
       "details": "Mobile bottom navigation bar rendered",
-      "durationMs": 657
+      "durationMs": 709
     },
     {
       "suite": "15. Mobile Viewport (375x812)",
       "name": "Mobile bottom nav contains 4 active tabs (Home, Browse, Watchlist, Account)",
       "passed": true,
       "details": "Mobile tabs: home, browse, watchlist, account",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "suite": "15. Mobile Viewport (375x812)",
@@ -585,28 +585,28 @@
       "name": "Mobile search modal renders trending search chips",
       "passed": true,
       "details": "Trending tags: Chainsaw Man, Solo Leveling, Demon Slayer, Jujutsu Kaisen, One Piece",
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "suite": "15. Mobile Viewport (375x812)",
       "name": "Clicking trending search chip \"Demon Slayer\" displays results",
       "passed": true,
-      "details": "1 instant search results rendered",
-      "durationMs": 1048
+      "details": "9 instant search results rendered",
+      "durationMs": 1051
     },
     {
       "suite": "15. Mobile Viewport (375x812)",
       "name": "Mobile search modal close button closes overlay",
       "passed": true,
       "details": "Mobile search modal closed",
-      "durationMs": 352
+      "durationMs": 315
     },
     {
       "suite": "15. Mobile Viewport (375x812)",
       "name": "Mobile Browse view renders filter trigger button with counter badge",
       "passed": true,
       "details": "Mobile filter button present (Badge: 0)",
-      "durationMs": 526
+      "durationMs": 521
     },
     {
       "suite": "16. Runtime Health",
